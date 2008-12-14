@@ -25,8 +25,7 @@ import com.hellblazer.primeMover.test.SimulationTests;
 import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.runtime.Kalachakra;
 import com.hellblazer.primeMover.Kronos;
-import org.joda.time.Instant;
-import org.joda.time.Seconds;
+import org.joda.time.*;
 import concurrentinc.simulator.controller.RTController;
 import concurrentinc.simulator.controller.SimController;
 
@@ -46,13 +45,16 @@ public class SimpleTest extends SimulationTests
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
-    long time = System.currentTimeMillis();
+    Job job = new Job( TERA, TERA, TERA, 1000, 1000 );
+    Cluster cluster = new Cluster( 1000, 1000 );
 
-    Job job = new Job( TERA, TERA, TERA, 10, 10 );
-    Cluster cluster = new Cluster();
+    Instant startTime = controller.getCurrentTime();
+    System.out.println( "start: " + startTime );
 
     cluster.submit( job );
 
-    System.out.println( ( System.currentTimeMillis() - time ) / 1000 );
+    Instant endTime = controller.getCurrentTime();
+    System.out.println( "end: " + endTime );
+    System.out.println( "duration: " + new Period( startTime, endTime, PeriodType.standard() ) );
     }
   }

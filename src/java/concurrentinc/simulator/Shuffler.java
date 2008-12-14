@@ -29,11 +29,11 @@ import com.hellblazer.primeMover.Kronos;
  */
 public class Shuffler
   {
-  float sortFactor = 50; // Mb / sec
+  float sortFactor = 1024; // Gb / sec
   float networkFactor;
   long sortBlockSizeMb;
-  private int numMappers;
-  private long sizeMb;
+  int numMappers;
+  long sizeMb;
 
   public Shuffler( float networkFactor, long sortBlockSizeMb, int numMappers, long sizeMb )
     {

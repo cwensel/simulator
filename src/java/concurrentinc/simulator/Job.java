@@ -43,10 +43,10 @@ public class Job
   int fileReplication = 3;
   int blockSizeMb = 128;
 
-  float mapProcessingFactor = 0; // Mb / sec
-  float reduceProcessingFactor = 0; // Mb / sec
+  float mapProcessingFactor = 512; // Mb / sec
+  float reduceProcessingFactor = 512; // Mb / sec
 
-  float networkFactor = 10 * 1000; // Mb / sec
+  float networkFactor = 10 * 1024; // Mb / sec
   long sortBlockSizeMb = 100;
 
   public Job( long inputSizeMb, long shuffleSizeMb, long outputSizeMb, int numMappers, int numReducers )

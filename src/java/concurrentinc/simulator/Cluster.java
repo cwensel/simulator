@@ -34,13 +34,28 @@ import java.util.concurrent.*;
 public class Cluster
   {
   int maxMapProcesses = 100;
-  int maxReduceProcesses= 100;
-  int maxProcesses = 100;
+  int maxReduceProcesses = 100;
+  int maxProcesses = Integer.MAX_VALUE;
+
+  public Cluster()
+    {
+    }
+
+  public Cluster( int maxMapProcesses, int maxReduceProcesses )
+    {
+    this.maxMapProcesses = maxMapProcesses;
+    this.maxReduceProcesses = maxReduceProcesses;
+    }
 
   public void submit( Job job ) throws InterruptedException, ExecutionException
     {
-    System.out.println( "entering submit" );
-    ExecutorService mapExecutor = Executors.newFixedThreadPool( Math.min(maxProcesses, maxMapProcesses ));
+    executeMaps( job );
+    executeReduces( job );
+    }
+
+  private void executeMaps( Job job ) throws InterruptedException, ExecutionException
+    {
+    ExecutorService mapExecutor = Executors.newFixedThreadPool( Math.min( maxProcesses, maxMapProcesses ) );
     Collection<MapProcess> maps = job.getMapProcesses();
     System.out.println( "maps.size() = " + maps.size() );
 
@@ -48,8 +63,11 @@ public class Cluster
 
     for( Future<Boolean> mapFuture : mapFutures )
       mapFuture.get();
+    }
 
-    ExecutorService reduceExecutor = Executors.newFixedThreadPool(  Math.min(maxProcesses, maxReduceProcesses ) );
+  private void executeReduces( Job job ) throws InterruptedException, ExecutionException
+    {
+    ExecutorService reduceExecutor = Executors.newFixedThreadPool( Math.min( maxProcesses, maxReduceProcesses ) );
     Collection<ReduceProcess> reduces = job.getReduceProcesses();
     System.out.println( "reduces.size() = " + reduces.size() );
 

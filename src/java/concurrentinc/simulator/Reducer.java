@@ -40,6 +40,8 @@ public class Reducer
 
   public void execute()
     {
-    Kronos.sleep( (long) ( sizeMb / processingFactor ) * 1000 );
+    float sleep = sizeMb / processingFactor * 1000;
+
+    Kronos.sleep( (long) sleep );
     }
   }
