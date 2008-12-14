@@ -22,6 +22,7 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Continuable;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +31,6 @@ import java.util.concurrent.*;
 /**
  *
  */
-@Entity
 public class Cluster
   {
   int maxMapProcesses = 100;
@@ -39,8 +39,10 @@ public class Cluster
 
   public void submit( Job job ) throws InterruptedException, ExecutionException
     {
+    System.out.println( "entering submit" );
     ExecutorService mapExecutor = Executors.newFixedThreadPool( Math.min(maxProcesses, maxMapProcesses ));
     Collection<MapProcess> maps = job.getMapProcesses();
+    System.out.println( "maps.size() = " + maps.size() );
 
     List<Future<Boolean>> mapFutures = mapExecutor.invokeAll( maps );
 
@@ -49,6 +51,8 @@ public class Cluster
 
     ExecutorService reduceExecutor = Executors.newFixedThreadPool(  Math.min(maxProcesses, maxReduceProcesses ) );
     Collection<ReduceProcess> reduces = job.getReduceProcesses();
+    System.out.println( "reduces.size() = " + reduces.size() );
+
 
     List<Future<Boolean>> reduceFutures = reduceExecutor.invokeAll( reduces );
 

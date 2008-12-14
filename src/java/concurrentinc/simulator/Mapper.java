@@ -40,6 +40,6 @@ public class Mapper
 
   public void execute()
     {
-    Kronos.sleep( (long) (sizeMb / processingFactor) );
+    Kronos.sleep( (long) ( sizeMb / processingFactor ) );
     }
   }

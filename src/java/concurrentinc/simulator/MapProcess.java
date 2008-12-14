@@ -21,6 +21,9 @@
 
 package concurrentinc.simulator;
 
+import com.hellblazer.primeMover.Continuable;
+import com.hellblazer.primeMover.Entity;
+
 import java.util.concurrent.Callable;
 
 /**
