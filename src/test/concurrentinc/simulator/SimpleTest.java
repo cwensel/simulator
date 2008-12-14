@@ -41,7 +41,7 @@ public class SimpleTest extends SimulationTests
 
   public void testSimple() throws ExecutionException, InterruptedException
     {
-    Kalachakra controller = new RTController();
+    Kalachakra controller = new SimController();
     Framework.setController( controller );
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
