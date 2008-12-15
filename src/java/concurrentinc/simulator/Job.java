@@ -75,7 +75,7 @@ public class Job
     return numReducers;
     }
 
-  public Collection<MapProcess> getMapProcesses( Semaphore semaphore )
+  public Collection<MapProcess> getMapProcesses( Cluster cluster )
     {
     Set<MapProcess> maps = new HashSet<MapProcess>();
 
@@ -88,7 +88,7 @@ public class Job
       {
       long toProcess = Math.min( subBlockSize, size );
       Mapper mapper = new Mapper( data, mapProcessingFactor, toProcess );
-      maps.add( new MapProcess( semaphore, mapper ) );
+      maps.add( new MapProcess( cluster, mapper ) );
 
       size -= toProcess;
       }
@@ -96,7 +96,7 @@ public class Job
     return maps;
     }
 
-  public Collection<ReduceProcess> getReduceProcesses( Semaphore semaphore )
+  public Collection<ReduceProcess> getReduceProcesses( Cluster cluster )
     {
     Set<ReduceProcess> reduces = new HashSet<ReduceProcess>();
 
@@ -105,12 +105,11 @@ public class Job
 
     DistributedData data = new DistributedData( networkFactor, fileReplication );
 
-
     for( int i = 0; i < getNumReducers(); i++ )
       {
       Shuffler shuffler = new Shuffler( networkFactor, sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, reduceProcessingFactor, toProcess, toWrite );
-      reduces.add( new ReduceProcess( semaphore, shuffler, reducer ) );
+      reduces.add( new ReduceProcess( cluster, shuffler, reducer ) );
       }
 
     return reduces;

@@ -28,7 +28,6 @@ import com.hellblazer.primeMover.Entity;
 /**
  *
  */
-@Entity
 public class DistributedData
   {
   float networkFactor;
@@ -62,18 +61,16 @@ public class DistributedData
     return getNumBlocks() * fileReplication;
     }
 
-  @Blocking
   public void read( long amountMb )
     {
     if( readCounter++ < getNumReplicatedBlocks() )
       return;
 
-    Kronos.blockingSleep( (long) ( amountMb / networkFactor * 1000 ) );
+    Kronos.sleep( (long) ( amountMb / networkFactor * 1000 ) );
     }
 
-  @Blocking
   public void write( long amountMb )
     {
-    Kronos.blockingSleep( (long) ( amountMb / networkFactor * fileReplication * 1000 ) );
+    Kronos.sleep( (long) ( amountMb / networkFactor * fileReplication * 1000 ) );
     }
   }

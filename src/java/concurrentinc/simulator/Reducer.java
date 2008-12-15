@@ -28,7 +28,6 @@ import com.hellblazer.primeMover.Blocking;
 /**
  *
  */
-@Entity
 public class Reducer
   {
   private DistributedData data;
@@ -44,7 +43,6 @@ public class Reducer
     this.outputSizeMb = outputSizeMb;
     }
 
-  @Blocking
   public void execute()
     {
     blockProcessing();
@@ -60,6 +58,6 @@ public class Reducer
     {
     float sleep = processSizeMb / processingFactor * 1000;
 
-    Kronos.blockingSleep( (long) sleep );
+    Kronos.sleep( (long) sleep );
     }
   }

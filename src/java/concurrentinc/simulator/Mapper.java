@@ -28,7 +28,6 @@ import com.hellblazer.primeMover.Blocking;
 /**
  *
  */
-@Entity
 public class Mapper
   {
   DistributedData data;
@@ -42,7 +41,6 @@ public class Mapper
     this.sizeMb = sizeMb;
     }
 
-  @Blocking
   public void execute()
     {
 //    System.out.println( "begin mapper" );
@@ -60,6 +58,6 @@ public class Mapper
     {
     float sleep = sizeMb / processingFactor * 1000;
 
-    Kronos.blockingSleep( (long) sleep );
+    Kronos.sleep( (long) sleep );
     }
   }

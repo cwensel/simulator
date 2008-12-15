@@ -28,7 +28,6 @@ import com.hellblazer.primeMover.Blocking;
 /**
  *
  */
-@Entity
 public class Shuffler
   {
   float sortFactor = 1024; // Gb / sec
@@ -45,16 +44,14 @@ public class Shuffler
     this.sizeMb = sizeMb;
     }
 
-  @Blocking
   public void execute()
     {
     // fetch
     // should fetch through network object
-    Kronos.blockingSleep( (long) ( sizeMb / networkFactor ) * 1000 );
+    Kronos.sleep( (long) ( sizeMb / networkFactor ) * 1000 );
 
     // sort
     // assumes O(n log n)
-    Kronos.blockingSleep( (long) ( sizeMb * Math.log( sizeMb ) / sortFactor ) * 1000 );
-
+    Kronos.sleep( (long) ( sizeMb * Math.log( sizeMb ) / sortFactor ) * 1000 );
     }
   }

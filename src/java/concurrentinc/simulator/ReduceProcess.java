@@ -21,31 +21,27 @@
 
 package concurrentinc.simulator;
 
-import java.util.concurrent.Semaphore;
-
 /**
  *
  */
 public class ReduceProcess
   {
-  Semaphore semaphore;
+  Cluster cluster;
   Shuffler shuffler;
   Reducer reducer;
 
-  public ReduceProcess( Semaphore semaphore, Shuffler shuffler, Reducer reducer )
+  public ReduceProcess( Cluster cluster, Shuffler shuffler, Reducer reducer )
     {
-    this.semaphore = semaphore;
+    this.cluster = cluster;
     this.shuffler = shuffler;
     this.reducer = reducer;
     }
 
   public void execute() throws InterruptedException
     {
-    semaphore.acquire();
-
     shuffler.execute();
     reducer.execute();
 
-    semaphore.release();
+    cluster.releaseReduce();
     }
   }

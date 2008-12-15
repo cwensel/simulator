@@ -27,8 +27,7 @@ import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.runtime.Framework;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -40,6 +39,13 @@ public class Cluster
   int maxMapProcesses = 100;
   int maxReduceProcesses = 100;
   int maxProcesses = Integer.MAX_VALUE;
+
+  int currentProcesses;
+  int currentMapProcesses;
+  int currentReduceProcesses;
+
+  Queue<MapProcess> mapQueue = new LinkedList<MapProcess>();
+  Queue<ReduceProcess> reduceQueue = new LinkedList<ReduceProcess>();
 
   public Cluster()
     {
@@ -59,25 +65,101 @@ public class Cluster
 
   private void executeMaps( Job job ) throws InterruptedException, ExecutionException
     {
-    int numProcesses = Math.min( maxProcesses, maxMapProcesses );
-    Semaphore semaphore = new Semaphore( numProcesses );
-
-    Collection<MapProcess> maps = job.getMapProcesses( semaphore );
+    Collection<MapProcess> maps = job.getMapProcesses( this );
     System.out.println( "maps.sizeMb() = " + maps.size() );
 
-    for( MapProcess map : maps )
-      map.execute();
+    queueMaps( maps );
+    }
+
+  private void queueMaps( Collection<MapProcess> maps )
+    {
+    mapQueue.addAll( maps );
+
+    int numProcesses = Math.min( maxProcesses - currentProcesses, maxMapProcesses - currentMapProcesses );
+
+    for( int i = 0; i < numProcesses; i++ )
+      startMap();
+    }
+
+  public void releaseMap()
+    {
+    currentProcesses--;
+    currentMapProcesses--;
+
+    startMap();
+    }
+
+  public void startMap()
+    {
+    if( mapQueue.size() == 0 )
+      return;
+
+    if( currentProcesses >= maxProcesses )
+      return;
+
+    if( currentMapProcesses >= maxMapProcesses )
+      return;
+
+    currentProcesses++;
+    currentMapProcesses++;
+
+    try
+      {
+      mapQueue.remove().execute();
+      }
+    catch( InterruptedException e )
+      {
+      // ignore
+      }
+    }
+
+  private void queueReduces( Collection<ReduceProcess> reduces )
+    {
+    reduceQueue.addAll( reduces );
+
+    int numProcesses = Math.min( maxProcesses - currentProcesses, maxReduceProcesses - currentReduceProcesses );
+
+    for( int i = 0; i < numProcesses; i++ )
+      startReduce();
+    }
+
+  public void releaseReduce()
+    {
+    currentProcesses--;
+    currentReduceProcesses--;
+
+    startReduce();
+    }
+
+  public void startReduce()
+    {
+    if( mapQueue.size() == 0 )
+      return;
+
+    if( currentProcesses >= maxProcesses )
+      return;
+
+    if( currentMapProcesses >= maxMapProcesses )
+      return;
+
+    currentProcesses++;
+    currentMapProcesses++;
+
+    try
+      {
+      reduceQueue.remove().execute();
+      }
+    catch( InterruptedException e )
+      {
+      // ignore
+      }
     }
 
   private void executeReduces( Job job ) throws InterruptedException, ExecutionException
     {
-    int numProcesses = Math.min( maxProcesses, maxReduceProcesses );
-    Semaphore semaphore = new Semaphore( numProcesses );
-
-    Collection<ReduceProcess> reduces = job.getReduceProcesses( semaphore );
+    Collection<ReduceProcess> reduces = job.getReduceProcesses( this );
     System.out.println( "reduces.sizeMb() = " + reduces.size() );
 
-    for( ReduceProcess reduce : reduces )
-      reduce.execute();
+    queueReduces( reduces );
     }
   }

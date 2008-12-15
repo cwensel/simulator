@@ -21,36 +21,26 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.Channel;
-import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
-
-import java.util.concurrent.Semaphore;
-
 /**
  *
  */
-@Entity
 public class MapProcess
   {
-  Semaphore semaphore;
+  Cluster cluster;
   Mapper mapper;
 
-  public MapProcess( Semaphore semaphore, Mapper mapper )
+  public MapProcess( Cluster cluster, Mapper mapper )
     {
-    this.semaphore = semaphore;
+    this.cluster = cluster;
     this.mapper = mapper;
     }
 
-  @Blocking
   public void execute() throws InterruptedException
     {
 //    System.out.println( "begin map process" );
-    semaphore.acquire();
-
     mapper.execute();
 
-    semaphore.release();
+    cluster.releaseMap();
 //    System.out.println( "end map process" );
     }
   }
