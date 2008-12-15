@@ -21,7 +21,6 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
 
 /**
@@ -29,19 +28,34 @@ import com.hellblazer.primeMover.Kronos;
  */
 public class Reducer
   {
+  private DistributedData data;
   float processingFactor;
-  long sizeMb;
+  long processSizeMb;
+  private long outputSizeMb;
 
-  public Reducer( float processingFactor, long sizeMb )
+  public Reducer( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
     {
+    this.data = data;
     this.processingFactor = processingFactor;
-    this.sizeMb = sizeMb;
+    this.processSizeMb = processSizeMb;
+    this.outputSizeMb = outputSizeMb;
     }
 
   public void execute()
     {
-    float sleep = sizeMb / processingFactor * 1000;
+    blockProcessing();
+    blockWriting();
+    }
 
-    Kronos.sleep( (long) sleep );
+  private void blockWriting()
+    {
+    data.write( outputSizeMb );
+    }
+
+  private void blockProcessing()
+    {
+    float sleep = processSizeMb / processingFactor * 1000;
+
+    Kronos.blockingSleep( (long) sleep );
     }
   }

@@ -23,24 +23,31 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Continuable;
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Channel;
+import com.hellblazer.primeMover.Blocking;
 
 import java.util.concurrent.Callable;
 
 /**
  *
  */
-public class MapProcess implements Callable<Boolean>
+public class MapProcess
   {
+  private Channel channel;
   Mapper mapper;
 
-  public MapProcess( Mapper mapper )
+  public MapProcess( Channel channel, Mapper mapper )
     {
+    this.channel = channel;
     this.mapper = mapper;
     }
 
-  public Boolean call() throws Exception
+  public void execute()
     {
+    System.out.println( "begin map process" );
+    Object object = channel.take();
     mapper.execute();
-    return true;
+    channel.put( object );
+    System.out.println( "end map process" );
     }
   }

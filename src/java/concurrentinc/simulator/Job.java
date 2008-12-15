@@ -22,6 +22,7 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Channel;
 
 import java.util.Collection;
 import java.util.Set;
@@ -43,8 +44,8 @@ public class Job
   int fileReplication = 3;
   int blockSizeMb = 128;
 
-  float mapProcessingFactor = 512; // Mb / sec
-  float reduceProcessingFactor = 512; // Mb / sec
+  float mapProcessingFactor = 100; // Mb / sec
+  float reduceProcessingFactor = 100; // Mb / sec
 
   float networkFactor = 10 * 1024; // Mb / sec
   long sortBlockSizeMb = 100;
@@ -73,18 +74,20 @@ public class Job
     return numReducers;
     }
 
-  public Collection<MapProcess> getMapProcesses()
+  public Collection<MapProcess> getMapProcesses( Channel channel )
     {
     Set<MapProcess> maps = new HashSet<MapProcess>();
 
     long size = inputSizeMb;
     long subBlockSize = (long) Math.floor( inputSizeMb / getNumMappers() );
 
+    DistributedData data = new DistributedData( networkFactor, inputSizeMb, blockSizeMb, fileReplication );
+
     for( int i = 0; i < getNumMappers(); i++ )
       {
       long toProcess = Math.min( subBlockSize, size );
-
-      maps.add( new MapProcess( new Mapper( mapProcessingFactor, toProcess ) ) );
+      Mapper mapper = new Mapper( data, mapProcessingFactor, toProcess );
+      maps.add( new MapProcess( channel, mapper ) );
 
       size -= toProcess;
       }
@@ -92,17 +95,21 @@ public class Job
     return maps;
     }
 
-  public Collection<ReduceProcess> getReduceProcesses()
+  public Collection<ReduceProcess> getReduceProcesses( Channel channel )
     {
     Set<ReduceProcess> reduces = new HashSet<ReduceProcess>();
 
     long toProcess = shuffleSizeMb / getNumReducers(); // assume even distribution
+    long toWrite = outputSizeMb / getNumReducers();
+
+    DistributedData data = new DistributedData( networkFactor, fileReplication );
+
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
       Shuffler shuffler = new Shuffler( networkFactor, sortBlockSizeMb, getNumMappers(), toProcess );
-      Reducer reducer = new Reducer( reduceProcessingFactor, toProcess );
-      reduces.add( new ReduceProcess( shuffler, reducer ) );
+      Reducer reducer = new Reducer( data, reduceProcessingFactor, toProcess, toWrite );
+      reduces.add( new ReduceProcess( channel, shuffler, reducer ) );
       }
 
     return reduces;

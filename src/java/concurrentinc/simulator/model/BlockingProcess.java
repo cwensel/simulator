@@ -19,7 +19,7 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
@@ -28,31 +28,13 @@ import com.hellblazer.primeMover.Blocking;
 /**
  *
  */
-public class Shuffler
+@Entity
+public class BlockingProcess
   {
-  float sortFactor = 1024; // Gb / sec
-  float networkFactor;
-  long sortBlockSizeMb;
-  int numMappers;
-  long sizeMb;
 
-  public Shuffler( float networkFactor, long sortBlockSizeMb, int numMappers, long sizeMb )
+  @Blocking
+  public void execute( long duration )
     {
-    this.networkFactor = networkFactor;
-    this.sortBlockSizeMb = sortBlockSizeMb;
-    this.numMappers = numMappers;
-    this.sizeMb = sizeMb;
-    }
-
-  public void execute()
-    {
-    // fetch
-    // should fetch through network object
-    Kronos.blockingSleep( (long) ( sizeMb / networkFactor ) * 1000 );
-
-    // sort
-    // assumes O(n log n)
-    Kronos.blockingSleep( (long) ( sizeMb * Math.log( sizeMb ) / sortFactor ) * 1000 );
-
+    Kronos.blockingSleep( duration );
     }
   }

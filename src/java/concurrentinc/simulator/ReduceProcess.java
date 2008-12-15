@@ -23,27 +23,34 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Continuable;
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.Channel;
 
 import java.util.concurrent.Callable;
 
 /**
  *
  */
-public class ReduceProcess implements Callable<Boolean>
+public class ReduceProcess
   {
+  private Channel channel;
   Shuffler shuffler;
   Reducer reducer;
 
-  public ReduceProcess( Shuffler shuffler, Reducer reducer )
+  public ReduceProcess( Channel channel, Shuffler shuffler, Reducer reducer )
     {
+    this.channel = channel;
     this.shuffler = shuffler;
     this.reducer = reducer;
     }
 
-  public Boolean call() throws Exception
+  public void execute()
     {
+    Object token = channel.take();
+
     shuffler.execute();
     reducer.execute();
-    return true;
+
+    channel.put( token );
     }
   }

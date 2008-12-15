@@ -21,38 +21,54 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
-import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
-public class Shuffler
+public class DistributedData
   {
-  float sortFactor = 1024; // Gb / sec
   float networkFactor;
-  long sortBlockSizeMb;
-  int numMappers;
   long sizeMb;
+  long blockSizeMb;
+  int fileReplication;
 
-  public Shuffler( float networkFactor, long sortBlockSizeMb, int numMappers, long sizeMb )
+  long readCounter;
+
+  public DistributedData( float networkFactor, int fileReplication )
     {
     this.networkFactor = networkFactor;
-    this.sortBlockSizeMb = sortBlockSizeMb;
-    this.numMappers = numMappers;
-    this.sizeMb = sizeMb;
+    this.fileReplication = fileReplication;
     }
 
-  public void execute()
+  public DistributedData( float networkFactor, long sizeMb, long blockSizeMb, int fileReplication )
     {
-    // fetch
-    // should fetch through network object
-    Kronos.blockingSleep( (long) ( sizeMb / networkFactor ) * 1000 );
+    this.networkFactor = networkFactor;
+    this.sizeMb = sizeMb;
+    this.blockSizeMb = blockSizeMb;
+    this.fileReplication = fileReplication;
+    }
 
-    // sort
-    // assumes O(n log n)
-    Kronos.blockingSleep( (long) ( sizeMb * Math.log( sizeMb ) / sortFactor ) * 1000 );
+  public int getNumBlocks()
+    {
+    return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
+    }
 
+  public int getNumReplicatedBlocks()
+    {
+    return getNumBlocks() * fileReplication;
+    }
+
+  public void read( long amountMb )
+    {
+    if( readCounter++ < getNumReplicatedBlocks() )
+      return;
+
+    Kronos.blockingSleep( (long) ( amountMb / networkFactor * 1000 ) );
+    }
+
+  public void write( long amountMb )
+    {
+    Kronos.blockingSleep( (long) ( amountMb / networkFactor * fileReplication * 1000 ) );
     }
   }

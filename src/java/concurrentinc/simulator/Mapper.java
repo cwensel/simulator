@@ -23,27 +23,42 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
 public class Mapper
   {
+  DistributedData data;
   float processingFactor;
   long sizeMb;
 
-  public Mapper( float processingFactor, long sizeMb )
+  public Mapper( DistributedData data, float processingFactor, long sizeMb )
     {
+    this.data = data;
     this.processingFactor = processingFactor;
     this.sizeMb = sizeMb;
     }
 
   public void execute()
     {
+    System.out.println( "begin mapper" );
+    blockReadingData();
+    blockProcessingData();
+    System.out.println( "end mapper" );
+    }
+
+  private void blockReadingData()
+    {
+    data.read( sizeMb );
+    }
+
+  @Blocking
+  private void blockProcessingData()
+    {
     float sleep = sizeMb / processingFactor * 1000;
 
-//    System.out.println( "sleep = " + sleep );
-
-    Kronos.sleep( (long) sleep );
+    Kronos.blockingSleep( (long) sleep );
     }
   }

@@ -25,38 +25,37 @@ import com.hellblazer.primeMover.test.SimulationTests;
 import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.runtime.Kalachakra;
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.controllers.SteppingController;
 import org.joda.time.*;
 import concurrentinc.simulator.controller.RTController;
 import concurrentinc.simulator.controller.SimController;
+import concurrentinc.simulator.model.BlockingProcess;
 
 import java.util.concurrent.ExecutionException;
 
 /**
  *
  */
-public class SimpleTest extends SimulationTests
+public class ModelsTest extends SimulationTests
   {
-  public static final int TERA = 1 * 1024 * 1024;
 
-  public void testSimple() throws ExecutionException, InterruptedException
+  public void testThreads() throws ExecutionException, InterruptedException
     {
-    SimController controller = new SimController();
+    SteppingController controller = new SteppingController();
     Framework.setController( controller );
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
-    Job job = new Job( TERA, TERA, TERA, 1000, 1000 );
-    Cluster cluster = new Cluster( 100, 100 );
-
     Instant startTime = controller.getCurrentTime();
     System.out.println( "start: " + startTime );
 
-    cluster.submit( job );
+    BlockingProcess process = new BlockingProcess();
 
-    controller.eventLoop();
+    process.execute( 10 * 1000 );
 
     Instant endTime = controller.getCurrentTime();
     System.out.println( "end: " + endTime );
     System.out.println( "duration: " + new Period( startTime, endTime, PeriodType.standard() ) );
     }
+
   }

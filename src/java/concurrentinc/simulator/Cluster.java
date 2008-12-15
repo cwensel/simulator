@@ -21,8 +21,11 @@
 
 package concurrentinc.simulator;
 
+import com.hellblazer.primeMover.Channel;
+import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Continuable;
+import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.runtime.Framework;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +34,7 @@ import java.util.concurrent.*;
 /**
  *
  */
+@Entity
 public class Cluster
   {
   int maxMapProcesses = 100;
@@ -55,26 +59,31 @@ public class Cluster
 
   private void executeMaps( Job job ) throws InterruptedException, ExecutionException
     {
-    ExecutorService mapExecutor = Executors.newFixedThreadPool( Math.min( maxProcesses, maxMapProcesses ) );
-    Collection<MapProcess> maps = job.getMapProcesses();
-    System.out.println( "maps.size() = " + maps.size() );
+    Channel channel = Kronos.createChannel();
+    int numProcesses = Math.min( maxProcesses, maxMapProcesses );
 
-    List<Future<Boolean>> mapFutures = mapExecutor.invokeAll( maps );
+    for( int i = 0; i < numProcesses; i++ )
+      channel.put( "map_token_" + i );
 
-    for( Future<Boolean> mapFuture : mapFutures )
-      mapFuture.get();
+    Collection<MapProcess> maps = job.getMapProcesses( channel );
+    System.out.println( "maps.sizeMb() = " + maps.size() );
+
+    for( MapProcess map : maps )
+      map.execute();
     }
 
   private void executeReduces( Job job ) throws InterruptedException, ExecutionException
     {
-    ExecutorService reduceExecutor = Executors.newFixedThreadPool( Math.min( maxProcesses, maxReduceProcesses ) );
-    Collection<ReduceProcess> reduces = job.getReduceProcesses();
-    System.out.println( "reduces.size() = " + reduces.size() );
+    Channel channel = Kronos.createChannel();
+    int numProcesses = Math.min( maxProcesses, maxReduceProcesses );
 
+    for( int i = 0; i < numProcesses; i++ )
+      channel.put( "red_token_" + i );
 
-    List<Future<Boolean>> reduceFutures = reduceExecutor.invokeAll( reduces );
+    Collection<ReduceProcess> reduces = job.getReduceProcesses( channel );
+    System.out.println( "reduces.sizeMb() = " + reduces.size() );
 
-    for( Future<Boolean> reduceFuture : reduceFutures )
-      reduceFuture.get();
+    for( ReduceProcess reduce : reduces )
+      reduce.execute();
     }
   }
