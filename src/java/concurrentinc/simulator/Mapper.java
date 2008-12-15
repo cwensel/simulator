@@ -43,10 +43,8 @@ public class Mapper
 
   public void execute()
     {
-//    System.out.println( "begin mapper" );
     blockReadingData();
     blockProcessingData();
-//    System.out.println( "end mapper" );
     }
 
   private void blockReadingData()
@@ -56,8 +54,10 @@ public class Mapper
 
   private void blockProcessingData()
     {
-    float sleep = sizeMb / processingFactor * 1000;
+    float mapperSleep = sizeMb / processingFactor * 1000;
 
-    Kronos.sleep( (long) sleep );
+    System.out.println( "mapperSleep = " + mapperSleep );
+
+    Kronos.sleep( (long) mapperSleep );
     }
   }

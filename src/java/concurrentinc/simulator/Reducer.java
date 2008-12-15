@@ -56,8 +56,10 @@ public class Reducer
 
   private void blockProcessing()
     {
-    float sleep = processSizeMb / processingFactor * 1000;
+    float reducerSleep = processSizeMb / processingFactor * 1000;
 
-    Kronos.sleep( (long) sleep );
+    System.out.println( "reducerSleep = " + reducerSleep );
+
+    Kronos.sleep( (long) reducerSleep );
     }
   }

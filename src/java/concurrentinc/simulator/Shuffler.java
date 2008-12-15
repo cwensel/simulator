@@ -48,10 +48,15 @@ public class Shuffler
     {
     // fetch
     // should fetch through network object
-    Kronos.sleep( (long) ( sizeMb / networkFactor ) * 1000 );
+    float fetchSleep = sizeMb / networkFactor * 1000;
+    System.out.println( "fetchSleep = " + fetchSleep );
+    Kronos.sleep( (long) fetchSleep );
 
     // sort
     // assumes O(n log n)
-    Kronos.sleep( (long) ( sizeMb * Math.log( sizeMb ) / sortFactor ) * 1000 );
+    double bigO = sizeMb * Math.log10( sizeMb );
+    double sortSleep = bigO / sortFactor * 1000;
+    System.out.println( "bigO = " + bigO + " sortSleep = " + sortSleep );
+    Kronos.sleep( (long) sortSleep );
     }
   }

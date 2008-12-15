@@ -21,9 +21,13 @@
 
 package concurrentinc.simulator;
 
+import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
+
 /**
  *
  */
+@Entity
 public class MapProcess
   {
   Cluster cluster;
@@ -37,10 +41,8 @@ public class MapProcess
 
   public void execute() throws InterruptedException
     {
-//    System.out.println( "begin map process" );
     mapper.execute();
 
     cluster.releaseMap();
-//    System.out.println( "end map process" );
     }
   }

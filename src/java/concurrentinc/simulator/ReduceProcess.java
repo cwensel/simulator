@@ -21,9 +21,13 @@
 
 package concurrentinc.simulator;
 
+import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
+
 /**
  *
  */
+@Entity
 public class ReduceProcess
   {
   Cluster cluster;

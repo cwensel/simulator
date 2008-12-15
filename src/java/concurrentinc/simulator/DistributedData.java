@@ -66,11 +66,19 @@ public class DistributedData
     if( readCounter++ < getNumReplicatedBlocks() )
       return;
 
-    Kronos.sleep( (long) ( amountMb / networkFactor * 1000 ) );
+    float readSleep = amountMb / networkFactor * 1000;
+
+    System.out.println( "readSleep = " + readSleep );
+    
+    Kronos.sleep( (long) readSleep );
     }
 
   public void write( long amountMb )
     {
-    Kronos.sleep( (long) ( amountMb / networkFactor * fileReplication * 1000 ) );
+    float writeSleep = amountMb / networkFactor * fileReplication * 1000;
+
+    System.out.println( "writeSleep = " + writeSleep );
+
+    Kronos.sleep( (long) writeSleep );
     }
   }

@@ -66,7 +66,7 @@ public class Cluster
   private void executeMaps( Job job ) throws InterruptedException, ExecutionException
     {
     Collection<MapProcess> maps = job.getMapProcesses( this );
-    System.out.println( "maps.sizeMb() = " + maps.size() );
+    System.out.println( "maps = " + maps.size() );
 
     queueMaps( maps );
     }
@@ -139,11 +139,11 @@ public class Cluster
     if( currentProcesses >= maxProcesses )
       return;
 
-    if( currentMapProcesses >= maxMapProcesses )
+    if( currentReduceProcesses >= maxReduceProcesses )
       return;
 
     currentProcesses++;
-    currentMapProcesses++;
+    currentReduceProcesses++;
 
     try
       {
@@ -158,7 +158,7 @@ public class Cluster
   private void executeReduces( Job job ) throws InterruptedException, ExecutionException
     {
     Collection<ReduceProcess> reduces = job.getReduceProcesses( this );
-    System.out.println( "reduces.sizeMb() = " + reduces.size() );
+    System.out.println( "reduces = " + reduces.size() );
 
     queueReduces( reduces );
     }
