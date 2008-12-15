@@ -22,10 +22,13 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
+@Entity
 public class Reducer
   {
   private DistributedData data;
@@ -41,6 +44,7 @@ public class Reducer
     this.outputSizeMb = outputSizeMb;
     }
 
+  @Blocking
   public void execute()
     {
     blockProcessing();

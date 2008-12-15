@@ -28,6 +28,7 @@ import com.hellblazer.primeMover.Blocking;
 /**
  *
  */
+@Entity
 public class Shuffler
   {
   float sortFactor = 1024; // Gb / sec
@@ -44,6 +45,7 @@ public class Shuffler
     this.sizeMb = sizeMb;
     }
 
+  @Blocking
   public void execute()
     {
     // fetch

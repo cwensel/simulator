@@ -21,36 +21,31 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.Continuable;
-import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
-import com.hellblazer.primeMover.Channel;
-
-import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 
 /**
  *
  */
 public class ReduceProcess
   {
-  private Channel channel;
+  Semaphore semaphore;
   Shuffler shuffler;
   Reducer reducer;
 
-  public ReduceProcess( Channel channel, Shuffler shuffler, Reducer reducer )
+  public ReduceProcess( Semaphore semaphore, Shuffler shuffler, Reducer reducer )
     {
-    this.channel = channel;
+    this.semaphore = semaphore;
     this.shuffler = shuffler;
     this.reducer = reducer;
     }
 
-  public void execute()
+  public void execute() throws InterruptedException
     {
-    Object token = channel.take();
+    semaphore.acquire();
 
     shuffler.execute();
     reducer.execute();
 
-    channel.put( token );
+    semaphore.release();
     }
   }

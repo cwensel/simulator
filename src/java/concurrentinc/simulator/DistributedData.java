@@ -22,10 +22,13 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.Entity;
 
 /**
  *
  */
+@Entity
 public class DistributedData
   {
   float networkFactor;
@@ -49,16 +52,17 @@ public class DistributedData
     this.fileReplication = fileReplication;
     }
 
-  public int getNumBlocks()
+  private int getNumBlocks()
     {
     return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
     }
 
-  public int getNumReplicatedBlocks()
+  private int getNumReplicatedBlocks()
     {
     return getNumBlocks() * fileReplication;
     }
 
+  @Blocking
   public void read( long amountMb )
     {
     if( readCounter++ < getNumReplicatedBlocks() )
@@ -67,6 +71,7 @@ public class DistributedData
     Kronos.blockingSleep( (long) ( amountMb / networkFactor * 1000 ) );
     }
 
+  @Blocking
   public void write( long amountMb )
     {
     Kronos.blockingSleep( (long) ( amountMb / networkFactor * fileReplication * 1000 ) );

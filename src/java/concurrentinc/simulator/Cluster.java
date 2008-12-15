@@ -59,13 +59,10 @@ public class Cluster
 
   private void executeMaps( Job job ) throws InterruptedException, ExecutionException
     {
-    Channel channel = Kronos.createChannel();
     int numProcesses = Math.min( maxProcesses, maxMapProcesses );
+    Semaphore semaphore = new Semaphore( numProcesses );
 
-    for( int i = 0; i < numProcesses; i++ )
-      channel.put( "map_token_" + i );
-
-    Collection<MapProcess> maps = job.getMapProcesses( channel );
+    Collection<MapProcess> maps = job.getMapProcesses( semaphore );
     System.out.println( "maps.sizeMb() = " + maps.size() );
 
     for( MapProcess map : maps )
@@ -74,13 +71,10 @@ public class Cluster
 
   private void executeReduces( Job job ) throws InterruptedException, ExecutionException
     {
-    Channel channel = Kronos.createChannel();
     int numProcesses = Math.min( maxProcesses, maxReduceProcesses );
+    Semaphore semaphore = new Semaphore( numProcesses );
 
-    for( int i = 0; i < numProcesses; i++ )
-      channel.put( "red_token_" + i );
-
-    Collection<ReduceProcess> reduces = job.getReduceProcesses( channel );
+    Collection<ReduceProcess> reduces = job.getReduceProcesses( semaphore );
     System.out.println( "reduces.sizeMb() = " + reduces.size() );
 
     for( ReduceProcess reduce : reduces )

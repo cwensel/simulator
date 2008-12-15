@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Semaphore;
 
 /**
  *
@@ -74,7 +75,7 @@ public class Job
     return numReducers;
     }
 
-  public Collection<MapProcess> getMapProcesses( Channel channel )
+  public Collection<MapProcess> getMapProcesses( Semaphore semaphore )
     {
     Set<MapProcess> maps = new HashSet<MapProcess>();
 
@@ -87,7 +88,7 @@ public class Job
       {
       long toProcess = Math.min( subBlockSize, size );
       Mapper mapper = new Mapper( data, mapProcessingFactor, toProcess );
-      maps.add( new MapProcess( channel, mapper ) );
+      maps.add( new MapProcess( semaphore, mapper ) );
 
       size -= toProcess;
       }
@@ -95,7 +96,7 @@ public class Job
     return maps;
     }
 
-  public Collection<ReduceProcess> getReduceProcesses( Channel channel )
+  public Collection<ReduceProcess> getReduceProcesses( Semaphore semaphore )
     {
     Set<ReduceProcess> reduces = new HashSet<ReduceProcess>();
 
@@ -109,7 +110,7 @@ public class Job
       {
       Shuffler shuffler = new Shuffler( networkFactor, sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, reduceProcessingFactor, toProcess, toWrite );
-      reduces.add( new ReduceProcess( channel, shuffler, reducer ) );
+      reduces.add( new ReduceProcess( semaphore, shuffler, reducer ) );
       }
 
     return reduces;
