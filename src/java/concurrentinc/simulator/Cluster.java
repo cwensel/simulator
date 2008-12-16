@@ -123,6 +123,13 @@ public class  Cluster
       startReduce();
     }
 
+  public void executeReduces( Collection<ReduceProcess> reduces )
+    {
+    System.out.println( "reduces = " + reduces.size() );
+
+    queueReduces( reduces );
+    }
+
   public void releaseReduce()
     {
     currentProcesses--;
@@ -153,13 +160,6 @@ public class  Cluster
       {
       // ignore
       }
-    }
-
-  public void executeReduces( Collection<ReduceProcess> reduces )
-    {
-    System.out.println( "reduces = " + reduces.size() );
-
-    queueReduces( reduces );
     }
 
   }

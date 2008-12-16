@@ -142,6 +142,8 @@ public class Job
     if( !maps.remove( mapProcess ) )
       throw new IllegalStateException( "map process not queued" );
 
+    cluster.releaseMap();
+
     if( maps.isEmpty() )
       startReduces();
     }
@@ -151,6 +153,7 @@ public class Job
     if( !reduces.remove( reduceProcess ) )
       throw new IllegalStateException( "reduce process not queued" );
 
+    cluster.releaseReduce();
 
     if( reduces.isEmpty() )
       endJob();
