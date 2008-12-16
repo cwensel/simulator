@@ -21,11 +21,7 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.Channel;
-import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
-import com.hellblazer.primeMover.runtime.Framework;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -34,7 +30,7 @@ import java.util.concurrent.*;
  *
  */
 @Entity
-public class Cluster
+public class  Cluster
   {
   int maxMapProcesses = 100;
   int maxReduceProcesses = 100;
@@ -57,15 +53,19 @@ public class Cluster
     this.maxReduceProcesses = maxReduceProcesses;
     }
 
-  public void submit( Job job ) throws InterruptedException, ExecutionException
+  public void submitJob( Job job ) throws InterruptedException, ExecutionException
     {
-    executeMaps( job );
-    executeReduces( job );
+    job.startJob( this );
     }
 
-  private void executeMaps( Job job ) throws InterruptedException, ExecutionException
+
+  public void endJob( Job job )
     {
-    Collection<MapProcess> maps = job.getMapProcesses( this );
+
+    }
+
+  public  void executeMaps( Collection<MapProcess> maps )
+    {
     System.out.println( "maps = " + maps.size() );
 
     queueMaps( maps );
@@ -89,7 +89,7 @@ public class Cluster
     startMap();
     }
 
-  public void startMap()
+  void startMap()
     {
     if( mapQueue.size() == 0 )
       return;
@@ -131,9 +131,9 @@ public class Cluster
     startReduce();
     }
 
-  public void startReduce()
+  void startReduce()
     {
-    if( mapQueue.size() == 0 )
+    if( reduceQueue.size() == 0 )
       return;
 
     if( currentProcesses >= maxProcesses )
@@ -155,11 +155,11 @@ public class Cluster
       }
     }
 
-  private void executeReduces( Job job ) throws InterruptedException, ExecutionException
+  public void executeReduces( Collection<ReduceProcess> reduces )
     {
-    Collection<ReduceProcess> reduces = job.getReduceProcesses( this );
     System.out.println( "reduces = " + reduces.size() );
 
     queueReduces( reduces );
     }
+
   }

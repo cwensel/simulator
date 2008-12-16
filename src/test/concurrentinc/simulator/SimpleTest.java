@@ -23,10 +23,7 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.test.SimulationTests;
 import com.hellblazer.primeMover.runtime.Framework;
-import com.hellblazer.primeMover.runtime.Kalachakra;
-import com.hellblazer.primeMover.Kronos;
 import org.joda.time.*;
-import concurrentinc.simulator.controller.RTController;
 import concurrentinc.simulator.controller.SimController;
 
 import java.util.concurrent.ExecutionException;
@@ -51,7 +48,7 @@ public class SimpleTest extends SimulationTests
     Instant startTime = controller.getCurrentTime();
     System.out.println( "start: " + startTime );
 
-    cluster.submit( job );
+    cluster.submitJob( job );
 
     controller.eventLoop();
 

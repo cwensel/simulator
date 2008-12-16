@@ -22,17 +22,15 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Channel;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Semaphore;
 
 /**
  *
  */
+@Entity
 public class Job
   {
   long inputSizeMb; // the input to mappers
@@ -50,6 +48,9 @@ public class Job
 
   float networkFactor = 10 * 1024; // Mb / sec
   long sortBlockSizeMb = 100;
+  private Set<MapProcess> maps;
+  private Set<ReduceProcess> reduces;
+  private Cluster cluster;
 
   public Job( long inputSizeMb, long shuffleSizeMb, long outputSizeMb, int numMappers, int numReducers )
     {
@@ -60,24 +61,45 @@ public class Job
     this.numReducers = numReducers;
     }
 
-  public int getNumMappers()
+  int getNumMappers()
     {
     return Math.max( getMinNumMappers(), (int) Math.ceil( inputSizeMb / blockSizeMb ) );
     }
 
-  public int getMinNumMappers()
+  int getMinNumMappers()
     {
     return numMappers;
     }
 
-  public int getNumReducers()
+  int getNumReducers()
     {
     return numReducers;
     }
 
-  public Collection<MapProcess> getMapProcesses( Cluster cluster )
+  public void startJob( Cluster cluster )
     {
-    Set<MapProcess> maps = new HashSet<MapProcess>();
+    this.cluster = cluster;
+    startMaps();
+    }
+
+  public void endJob()
+    {
+    cluster.endJob( this );
+    }
+
+  public void startMaps()
+    {
+    cluster.executeMaps( getMapProcesses() );
+    }
+
+  public void startReduces()
+    {
+    cluster.executeReduces( getReduceProcesses() );
+    }
+
+  private Collection<MapProcess> getMapProcesses()
+    {
+    maps = new HashSet<MapProcess>();
 
     long size = inputSizeMb;
     long subBlockSize = (long) Math.floor( inputSizeMb / getNumMappers() );
@@ -88,7 +110,7 @@ public class Job
       {
       long toProcess = Math.min( subBlockSize, size );
       Mapper mapper = new Mapper( data, mapProcessingFactor, toProcess );
-      maps.add( new MapProcess( cluster, mapper ) );
+      maps.add( new MapProcess( this, mapper ) );
 
       size -= toProcess;
       }
@@ -96,9 +118,9 @@ public class Job
     return maps;
     }
 
-  public Collection<ReduceProcess> getReduceProcesses( Cluster cluster )
+  private Collection<ReduceProcess> getReduceProcesses()
     {
-    Set<ReduceProcess> reduces = new HashSet<ReduceProcess>();
+    reduces = new HashSet<ReduceProcess>();
 
     long toProcess = shuffleSizeMb / getNumReducers(); // assume even distribution
     long toWrite = outputSizeMb / getNumReducers();
@@ -109,9 +131,28 @@ public class Job
       {
       Shuffler shuffler = new Shuffler( networkFactor, sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, reduceProcessingFactor, toProcess, toWrite );
-      reduces.add( new ReduceProcess( cluster, shuffler, reducer ) );
+      reduces.add( new ReduceProcess( this, shuffler, reducer ) );
       }
 
     return reduces;
+    }
+
+  public void releaseMap( MapProcess mapProcess )
+    {
+    if( !maps.remove( mapProcess ) )
+      throw new IllegalStateException( "map process not queued" );
+
+    if( maps.isEmpty() )
+      startReduces();
+    }
+
+  public void releaseReduce( ReduceProcess reduceProcess )
+    {
+    if( !reduces.remove( reduceProcess ) )
+      throw new IllegalStateException( "reduce process not queued" );
+
+
+    if( reduces.isEmpty() )
+      endJob();
     }
   }

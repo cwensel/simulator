@@ -22,7 +22,6 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
 
 /**
  *
@@ -30,12 +29,12 @@ import com.hellblazer.primeMover.Blocking;
 @Entity
 public class MapProcess
   {
-  Cluster cluster;
+  Job job;
   Mapper mapper;
 
-  public MapProcess( Cluster cluster, Mapper mapper )
+  public MapProcess( Job job, Mapper mapper )
     {
-    this.cluster = cluster;
+    this.job = job;
     this.mapper = mapper;
     }
 
@@ -43,6 +42,6 @@ public class MapProcess
     {
     mapper.execute();
 
-    cluster.releaseMap();
+    job.releaseMap( this );
     }
   }

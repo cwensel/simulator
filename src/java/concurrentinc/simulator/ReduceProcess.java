@@ -22,7 +22,6 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
 
 /**
  *
@@ -30,13 +29,13 @@ import com.hellblazer.primeMover.Blocking;
 @Entity
 public class ReduceProcess
   {
-  Cluster cluster;
+  Job job;
   Shuffler shuffler;
   Reducer reducer;
 
-  public ReduceProcess( Cluster cluster, Shuffler shuffler, Reducer reducer )
+  public ReduceProcess( Job job, Shuffler shuffler, Reducer reducer )
     {
-    this.cluster = cluster;
+    this.job = job;
     this.shuffler = shuffler;
     this.reducer = reducer;
     }
@@ -46,6 +45,7 @@ public class ReduceProcess
     shuffler.execute();
     reducer.execute();
 
-    cluster.releaseReduce();
+    job.releaseReduce( this );
     }
+
   }
