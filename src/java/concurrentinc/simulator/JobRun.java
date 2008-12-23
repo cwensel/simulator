@@ -106,7 +106,7 @@ public class JobRun
 
   public String print()
     {
-    return startTime + "\t" + endTime + "\t" + getDuration() + "\t" + getDurationSeconds() + "\t" + params.print();
+    return startTime + "\t" + endTime + "\t" + getDuration() + "\t" + getDurationSeconds().getSeconds() + "\t" + params.print();
     }
 
   public String printFields()
