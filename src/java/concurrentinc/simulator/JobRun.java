@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class JobRun
   {
+  private String[] fields = new String[]{"startTime", "endTime", "duration", "durationSeconds"};
   private Instant startTime;
   private Instant endTime;
   private JobParams params;
@@ -106,5 +107,10 @@ public class JobRun
   public String print()
     {
     return startTime + "\t" + endTime + "\t" + getDuration() + "\t" + getDurationSeconds() + "\t" + params.print();
+    }
+
+  public String printFields()
+    {
+    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + params.printFields();
     }
   }

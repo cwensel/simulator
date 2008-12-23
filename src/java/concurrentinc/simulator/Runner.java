@@ -33,6 +33,8 @@ public class Runner
   {
   public static void run( PrintWriter writer ) throws ExecutionException, InterruptedException, SimulationException
     {
+    boolean first = true;
+
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
 
     for( int inputSizeMb = 1; inputSizeMb < 1 * 1024 * 1024; inputSizeMb += 100 )
@@ -50,6 +52,12 @@ public class Runner
               JobRun run = new JobRun( params );
 
               run.run( clusterParams );
+
+              if( first )
+                {
+                writer.println( run.printFields() );
+                first = false;
+                }
 
               writer.println( run.print() );
               }

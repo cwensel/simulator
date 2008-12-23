@@ -26,6 +26,7 @@ package concurrentinc.simulator;
  */
 public class ClusterParams
   {
+  String[] fields = new String[]{"maxMapProcesses", "maxReduceProcesses"};
   int maxMapProcesses;
   int maxReduceProcesses;
 
@@ -33,5 +34,10 @@ public class ClusterParams
     {
     this.maxMapProcesses = maxMapProcesses;
     this.maxReduceProcesses = maxReduceProcesses;
+    }
+
+  public String printFields()
+    {
+    return fields[ 0 ] + "\t" + fields[ 1 ];
     }
   }

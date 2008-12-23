@@ -26,6 +26,7 @@ package concurrentinc.simulator;
  */
 public class JobParams
   {
+  private String[] fields = new String[]{"inputSizeMb", "shuffleSizeMb", "outputSizeMb", "numMappers", "numReducers"};
   int inputSizeMb;
   int shuffleSizeMb;
   int outputSizeMb;
@@ -50,5 +51,10 @@ public class JobParams
   public String print()
     {
     return inputSizeMb + "\t" + shuffleSizeMb + "\t" + outputSizeMb + "\t" + numMappers + "\t" + numReducers;
+    }
+
+  public String printFields()
+    {
+    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 3 ];
     }
   }
