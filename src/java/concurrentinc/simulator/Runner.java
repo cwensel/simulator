@@ -23,6 +23,7 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.runtime.SimulationException;
 
+import java.io.PrintWriter;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -30,7 +31,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class Runner
   {
-  public static void run() throws ExecutionException, InterruptedException, SimulationException
+  public static void run( PrintWriter writer ) throws ExecutionException, InterruptedException, SimulationException
     {
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
 
@@ -50,7 +51,7 @@ public class Runner
 
               run.run( clusterParams );
 
-              System.out.println( run.print() );
+              writer.println( run.print() );
               }
             }
           }

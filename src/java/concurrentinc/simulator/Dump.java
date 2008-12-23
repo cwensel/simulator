@@ -23,6 +23,7 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.transform.TransformingClassLoader;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 /**
@@ -39,9 +40,9 @@ public class Dump
 
     Class<?> type = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
 
-    Method method = type.getDeclaredMethod( "run" );
+    Method method = type.getDeclaredMethod( "run", PrintWriter.class );
 
-    method.invoke( null );
+    method.invoke( null, new PrintWriter( System.out ) );
     }
 
   }
