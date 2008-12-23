@@ -19,18 +19,20 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
  */
 @Entity
-public class  Cluster
+public class Cluster
   {
   int maxMapProcesses = 100;
   int maxReduceProcesses = 100;
@@ -64,7 +66,7 @@ public class  Cluster
 
     }
 
-  public  void executeMaps( Collection<MapProcess> maps )
+  public void executeMaps( Collection<MapProcess> maps )
     {
     System.out.println( "maps = " + maps.size() );
 

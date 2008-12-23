@@ -19,7 +19,7 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
 

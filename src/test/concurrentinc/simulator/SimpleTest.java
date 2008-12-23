@@ -21,12 +21,14 @@
 
 package concurrentinc.simulator;
 
-import com.hellblazer.primeMover.test.SimulationTests;
 import com.hellblazer.primeMover.runtime.Framework;
-import org.joda.time.*;
+import com.hellblazer.primeMover.test.SimulationTests;
 import concurrentinc.simulator.controller.SimController;
-
-import java.util.concurrent.ExecutionException;
+import concurrentinc.simulator.model.Cluster;
+import concurrentinc.simulator.model.Job;
+import org.joda.time.Instant;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
 
 /**
  *

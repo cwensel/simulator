@@ -19,47 +19,43 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
-import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
-public class Reducer
+public class Mapper
   {
-  private DistributedData data;
+  DistributedData data;
   float processingFactor;
-  long processSizeMb;
-  private long outputSizeMb;
+  long sizeMb;
 
-  public Reducer( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
+  public Mapper( DistributedData data, float processingFactor, long sizeMb )
     {
     this.data = data;
     this.processingFactor = processingFactor;
-    this.processSizeMb = processSizeMb;
-    this.outputSizeMb = outputSizeMb;
+    this.sizeMb = sizeMb;
     }
 
   public void execute()
     {
-    blockProcessing();
-    blockWriting();
+    blockReadingData();
+    blockProcessingData();
     }
 
-  private void blockWriting()
+  private void blockReadingData()
     {
-    data.write( outputSizeMb );
+    data.read( sizeMb );
     }
 
-  private void blockProcessing()
+  private void blockProcessingData()
     {
-    float reducerSleep = processSizeMb / processingFactor * 1000;
+    float mapperSleep = sizeMb / processingFactor * 1000;
 
-    System.out.println( "reducerSleep = " + reducerSleep );
+    System.out.println( "mapperSleep = " + mapperSleep );
 
-    Kronos.sleep( (long) reducerSleep );
+    Kronos.sleep( (long) mapperSleep );
     }
   }

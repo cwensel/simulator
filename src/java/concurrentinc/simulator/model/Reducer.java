@@ -19,33 +19,45 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Kronos;
 
 /**
  *
  */
-@Entity
-public class ReduceProcess
+public class Reducer
   {
-  Job job;
-  Shuffler shuffler;
-  Reducer reducer;
+  private DistributedData data;
+  float processingFactor;
+  long processSizeMb;
+  private long outputSizeMb;
 
-  public ReduceProcess( Job job, Shuffler shuffler, Reducer reducer )
+  public Reducer( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
     {
-    this.job = job;
-    this.shuffler = shuffler;
-    this.reducer = reducer;
+    this.data = data;
+    this.processingFactor = processingFactor;
+    this.processSizeMb = processSizeMb;
+    this.outputSizeMb = outputSizeMb;
     }
 
-  public void execute() throws InterruptedException
+  public void execute()
     {
-    shuffler.execute();
-    reducer.execute();
-
-    job.releaseReduce( this );
+    blockProcessing();
+    blockWriting();
     }
 
+  private void blockWriting()
+    {
+    data.write( outputSizeMb );
+    }
+
+  private void blockProcessing()
+    {
+    float reducerSleep = processSizeMb / processingFactor * 1000;
+
+    System.out.println( "reducerSleep = " + reducerSleep );
+
+    Kronos.sleep( (long) reducerSleep );
+    }
   }
