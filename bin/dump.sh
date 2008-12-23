@@ -14,4 +14,4 @@ CP=`find lib -maxdepth 1 -name '*.jar'`
 CP=`echo $CP | tr ' ' ':'`
 CP=${BASEDIR}/build/java:${CP}
 
-java -Xmx256M -cp "$CP:$PARENT_CP" $XARGS concurrentinc.simulator.Dump $*
+java -Xmx256M -cp "$CP:$PARENT_CP" $XARGS -Djava.util.logging.config.file=${BASEDIR}/build/java/logging.properties concurrentinc.simulator.Dump $*
