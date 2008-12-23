@@ -22,12 +22,16 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class Mapper
   {
+  private static final Logger LOG = LoggerFactory.getLogger( Mapper.class );
+
   DistributedData data;
   float processingFactor;
   long sizeMb;
@@ -54,7 +58,8 @@ public class Mapper
     {
     float mapperSleep = sizeMb / processingFactor * 1000;
 
-    System.out.println( "mapperSleep = " + mapperSleep );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "mapperSleep = " + mapperSleep );
 
     Kronos.sleep( (long) mapperSleep );
     }

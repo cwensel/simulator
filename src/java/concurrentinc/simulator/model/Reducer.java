@@ -22,15 +22,19 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class Reducer
   {
+  private static final Logger LOG = LoggerFactory.getLogger( Reducer.class );
+
   private DistributedData data;
-  float processingFactor;
-  long processSizeMb;
+  private float processingFactor;
+  private long processSizeMb;
   private long outputSizeMb;
 
   public Reducer( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
@@ -56,7 +60,8 @@ public class Reducer
     {
     float reducerSleep = processSizeMb / processingFactor * 1000;
 
-    System.out.println( "reducerSleep = " + reducerSleep );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "reducerSleep = " + reducerSleep );
 
     Kronos.sleep( (long) reducerSleep );
     }

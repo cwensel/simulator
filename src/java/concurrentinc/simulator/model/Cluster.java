@@ -22,6 +22,8 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -34,6 +36,8 @@ import java.util.concurrent.ExecutionException;
 @Entity
 public class Cluster
   {
+  private static final Logger LOG = LoggerFactory.getLogger( Cluster.class );
+
   int maxMapProcesses = 100;
   int maxReduceProcesses = 100;
   int maxProcesses = Integer.MAX_VALUE;
@@ -68,7 +72,8 @@ public class Cluster
 
   public void executeMaps( Collection<MapProcess> maps )
     {
-    System.out.println( "maps = " + maps.size() );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "maps = " + maps.size() );
 
     queueMaps( maps );
     }
@@ -127,7 +132,8 @@ public class Cluster
 
   public void executeReduces( Collection<ReduceProcess> reduces )
     {
-    System.out.println( "reduces = " + reduces.size() );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "reduces = " + reduces.size() );
 
     queueReduces( reduces );
     }

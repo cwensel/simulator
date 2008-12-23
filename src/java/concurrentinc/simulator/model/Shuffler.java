@@ -22,14 +22,18 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class Shuffler
   {
-  float sortFactor = 1024; // Gb / sec
-  float networkFactor;
+  private static final Logger LOG = LoggerFactory.getLogger( Shuffler.class );
+
+  private float sortFactor = 1024; // Gb / sec
+  private float networkFactor;
   long sortBlockSizeMb;
   int numMappers;
   long sizeMb;
@@ -47,14 +51,20 @@ public class Shuffler
     // fetch
     // should fetch through network object
     float fetchSleep = sizeMb / networkFactor * 1000;
-    System.out.println( "fetchSleep = " + fetchSleep );
+
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "fetchSleep = " + fetchSleep );
+
     Kronos.sleep( (long) fetchSleep );
 
     // sort
     // assumes O(n log n)
     double bigO = sizeMb * Math.log10( sizeMb );
     double sortSleep = bigO / sortFactor * 1000;
-    System.out.println( "bigO = " + bigO + " sortSleep = " + sortSleep );
+
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "bigO = " + bigO + " sortSleep = " + sortSleep );
+
     Kronos.sleep( (long) sortSleep );
     }
   }

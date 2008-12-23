@@ -22,12 +22,16 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class DistributedData
   {
+  private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
+
   float networkFactor;
   long sizeMb;
   long blockSizeMb;
@@ -66,7 +70,8 @@ public class DistributedData
 
     float readSleep = amountMb / networkFactor * 1000;
 
-    System.out.println( "readSleep = " + readSleep );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "readSleep = " + readSleep );
 
     Kronos.sleep( (long) readSleep );
     }
@@ -75,7 +80,8 @@ public class DistributedData
     {
     float writeSleep = amountMb / networkFactor * fileReplication * 1000;
 
-    System.out.println( "writeSleep = " + writeSleep );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "writeSleep = " + writeSleep );
 
     Kronos.sleep( (long) writeSleep );
     }
