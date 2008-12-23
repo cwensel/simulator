@@ -34,15 +34,17 @@ import java.util.concurrent.ExecutionException;
 public class SimpleTest extends SimulationTests
   {
   public static final int TERA = 1 * 1024 * 1024;
+  public static final int MEGA = 1 * 1024;
 
-  public void testSimple() throws ExecutionException, InterruptedException
+  public void testSimple() throws Exception
     {
     SimController controller = new SimController();
     Framework.setController( controller );
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
-    Job job = new Job( TERA, TERA, TERA, 100, 1 );
+    Job job = new Job( TERA, TERA, TERA, 100, 100 );
+//    Job job = new Job( MEGA, MEGA, MEGA, 100, 1 );
     Cluster cluster = new Cluster( 100, 100 );
 
     Instant startTime = controller.getCurrentTime();
