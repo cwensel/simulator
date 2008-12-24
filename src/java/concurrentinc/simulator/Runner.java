@@ -37,15 +37,15 @@ public class Runner
 
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
 
-    for( int inputSizeMb = 1; inputSizeMb <= 1 * 1024 * 1024; inputSizeMb += 1024 * 100 )
+    for( int inputSizeMb = 1; inputSizeMb <= 1 * 1024 * 1024; inputSizeMb += 1024 * 500 )
       {
-      for( int shuffleSizeMb = 1; shuffleSizeMb <= 1 * 1024 * 1024; shuffleSizeMb += 1024 * 100 )
+      for( int shuffleSizeMb = 1; shuffleSizeMb <= 1 * 1024 * 1024; shuffleSizeMb += 1024 * 500 )
         {
-        for( int outputSizeMb = 1; outputSizeMb <= 1 * 1024 * 1024; outputSizeMb += 1024 * 100 )
+        for( int outputSizeMb = 1; outputSizeMb <= 1 * 1024 * 1024; outputSizeMb += 1024 * 500 )
           {
-          for( int numMappers = 1; numMappers <= 501; numMappers += 100 )
+          for( int numMappers = 1; numMappers <= 1001; numMappers += 250 )
             {
-            for( int numReducers = 1; numReducers <= 501; numReducers += 100 )
+            for( int numReducers = 1; numReducers <= 1001; numReducers += 250 )
               {
               JobParams params = new JobParams( inputSizeMb, shuffleSizeMb, outputSizeMb, numMappers, numReducers );
 
