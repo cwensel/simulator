@@ -49,6 +49,8 @@ public class Dump
       printWriter = new PrintWriter( new FileWriter( args[ 0 ] ) );
 
     method.invoke( null, printWriter );
+
+    printWriter.flush();
     }
 
   }
