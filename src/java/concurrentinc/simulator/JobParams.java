@@ -55,6 +55,6 @@ public class JobParams
 
   public String printFields()
     {
-    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 3 ];
+    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 4 ];
     }
   }
