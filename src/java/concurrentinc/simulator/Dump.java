@@ -25,6 +25,7 @@ import com.hellblazer.primeMover.transform.TransformingClassLoader;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
@@ -39,8 +40,9 @@ public class Dump
     TransformingClassLoader transformingClassLoader = new TransformingClassLoader( loader, loader );
     Thread.currentThread().setContextClassLoader( transformingClassLoader );
 
-    Class<?> type = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
-    Method method = type.getDeclaredMethod( "run", PrintWriter.class );
+    Class<?> runner = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
+    Class<?> params = transformingClassLoader.loadClass( "concurrentinc.simulator.JobParams" );
+    Method method = runner.getDeclaredMethod( "run", PrintWriter.class, params, params, params );
 
 
     PrintWriter printWriter = new PrintWriter( System.out );
@@ -48,7 +50,14 @@ public class Dump
     if( args.length == 1 )
       printWriter = new PrintWriter( new FileWriter( args[ 0 ] ) );
 
-    method.invoke( null, printWriter );
+    Constructor<?> constructor = params.getConstructor( int.class, int.class, int.class, int.class, int.class );
+
+//    Object start = constructor.newInstance( 1, 1, 1, 1, 1 );
+    Object start = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1, 1 );
+    Object end = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1001, 1001 );
+    Object increment = constructor.newInstance( 1024 * 500, 1024 * 500, 1024 * 500, 50, 50 );
+
+    method.invoke( null, printWriter, start, end, increment );
 
     printWriter.flush();
     }

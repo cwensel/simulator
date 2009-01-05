@@ -31,21 +31,21 @@ import java.util.concurrent.ExecutionException;
  */
 public class Runner
   {
-  public static void run( PrintWriter writer ) throws ExecutionException, InterruptedException, SimulationException
+  public static void run( PrintWriter writer, JobParams start, JobParams end, JobParams increment ) throws ExecutionException, InterruptedException, SimulationException
     {
     boolean first = true;
 
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
 
-    for( int inputSizeMb = 1; inputSizeMb <= 1 * 1024 * 1024; inputSizeMb += 1024 * 500 )
+    for( int inputSizeMb = start.inputSizeMb; inputSizeMb <= end.inputSizeMb; inputSizeMb += increment.inputSizeMb )
       {
-      for( int shuffleSizeMb = 1; shuffleSizeMb <= 1 * 1024 * 1024; shuffleSizeMb += 1024 * 500 )
+      for( int shuffleSizeMb = start.shuffleSizeMb; shuffleSizeMb <= end.shuffleSizeMb; shuffleSizeMb += increment.shuffleSizeMb )
         {
-        for( int outputSizeMb = 1; outputSizeMb <= 1 * 1024 * 1024; outputSizeMb += 1024 * 500 )
+        for( int outputSizeMb = start.outputSizeMb; outputSizeMb <= end.outputSizeMb; outputSizeMb += increment.outputSizeMb )
           {
-          for( int numMappers = 1; numMappers <= 1001; numMappers += 250 )
+          for( int numMappers = start.numMappers; numMappers <= end.numMappers; numMappers += increment.numMappers )
             {
-            for( int numReducers = 1; numReducers <= 1001; numReducers += 250 )
+            for( int numReducers = start.numReducers; numReducers <= end.numReducers; numReducers += increment.numReducers )
               {
               JobParams params = new JobParams( inputSizeMb, shuffleSizeMb, outputSizeMb, numMappers, numReducers );
 
