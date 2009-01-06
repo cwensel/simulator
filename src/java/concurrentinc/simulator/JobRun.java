@@ -87,7 +87,7 @@ public class JobRun
 
     Cluster cluster = new Cluster( clusterParams.maxMapProcesses, clusterParams.maxReduceProcesses );
 
-    Job job = new Job( params.inputSizeMb, params.shuffleSizeMb, params.outputSizeMb, params.numMappers, params.numReducers );
+    Job job = new Job( params );
 
     setStartTime( controller.getCurrentTime() );
 

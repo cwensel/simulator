@@ -24,6 +24,7 @@ package concurrentinc.simulator;
 import com.hellblazer.primeMover.runtime.SimulationException;
 
 import java.io.PrintWriter;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -31,8 +32,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class Runner
   {
-  public static void run( PrintWriter writer, JobParams start, JobParams end, JobParams increment ) throws ExecutionException, InterruptedException, SimulationException
+  public static void run( PrintWriter writer, JobParams start, JobParams end, JobParams increment, float sample ) throws ExecutionException, InterruptedException, SimulationException
     {
+    Random random = new Random();
     boolean first = true;
 
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
@@ -47,6 +49,9 @@ public class Runner
             {
             for( int numReducers = start.numReducers; numReducers <= end.numReducers; numReducers += increment.numReducers )
               {
+              if( !first && sample != 1.0 && random.nextFloat() > sample )
+                continue;
+
               JobParams params = new JobParams( inputSizeMb, shuffleSizeMb, outputSizeMb, numMappers, numReducers );
 
               JobRun run = new JobRun( params );

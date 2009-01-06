@@ -42,7 +42,7 @@ public class Dump
 
     Class<?> runner = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
     Class<?> params = transformingClassLoader.loadClass( "concurrentinc.simulator.JobParams" );
-    Method method = runner.getDeclaredMethod( "run", PrintWriter.class, params, params, params );
+    Method method = runner.getDeclaredMethod( "run", PrintWriter.class, params, params, params, float.class );
 
 
     PrintWriter printWriter = new PrintWriter( System.out );
@@ -55,9 +55,12 @@ public class Dump
 //    Object start = constructor.newInstance( 1, 1, 1, 1, 1 );
     Object start = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1, 1 );
     Object end = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1001, 1001 );
-    Object increment = constructor.newInstance( 1024 * 500, 1024 * 500, 1024 * 500, 50, 50 );
+//    Object increment = constructor.newInstance( 1024 * 500, 1024 * 500, 1024 * 500, 50, 50 );
+    Object increment = constructor.newInstance( 1024, 1024, 1024, 5, 5 );
 
-    method.invoke( null, printWriter, start, end, increment );
+    float sample = 0.01f;
+
+    method.invoke( null, printWriter, start, end, increment, sample );
 
     printWriter.flush();
     }

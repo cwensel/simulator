@@ -21,17 +21,23 @@
 
 package concurrentinc.simulator;
 
+import java.util.Arrays;
+
 /**
  *
  */
 public class JobParams
   {
-  private String[] fields = new String[]{"inputSizeMb", "shuffleSizeMb", "outputSizeMb", "numMappers", "numReducers"};
-  int inputSizeMb;
-  int shuffleSizeMb;
-  int outputSizeMb;
-  int numMappers;
-  int numReducers;
+  private String[] fields = new String[]{"inputSizeMb", "shuffleSizeMb", "outputSizeMb", "numMappers", "numReducers", "networkBandwidth", "blockSizeMb", "fileReplication"};
+
+  public int inputSizeMb;
+  public int shuffleSizeMb;
+  public int outputSizeMb;
+  public int numMappers;
+  public int numReducers;
+  public float networkBandwidth = 10 * 1024; // Mb / sec;
+  public int blockSizeMb = 128;
+  public int fileReplication = 3;
 
   public JobParams( int inputSizeMb, int shuffleSizeMb, int outputSizeMb, int numMappers, int numReducers )
     {
@@ -42,19 +48,31 @@ public class JobParams
     this.numReducers = numReducers;
     }
 
+  public JobParams( int inputSizeMb, int shuffleSizeMb, int outputSizeMb, int numMappers, int numReducers, float networkBandwidth, int blockSizeMb, int fileReplication )
+    {
+    this.inputSizeMb = inputSizeMb;
+    this.shuffleSizeMb = shuffleSizeMb;
+    this.outputSizeMb = outputSizeMb;
+    this.numMappers = numMappers;
+    this.numReducers = numReducers;
+    this.networkBandwidth = networkBandwidth;
+    this.blockSizeMb = blockSizeMb;
+    this.fileReplication = fileReplication;
+    }
+
   @Override
   public String toString()
     {
-    return "JobParams{" + "inputSizeMb=" + inputSizeMb + ", shuffleSizeMb=" + shuffleSizeMb + ", outputSizeMb=" + outputSizeMb + ", numMappers=" + numMappers + ", numReducers=" + numReducers + '}';
+    return "JobParams{" + "fields=" + ( fields == null ? null : Arrays.asList( fields ) ) + ", inputSizeMb=" + inputSizeMb + ", shuffleSizeMb=" + shuffleSizeMb + ", outputSizeMb=" + outputSizeMb + ", numMappers=" + numMappers + ", numReducers=" + numReducers + ", networkBandwidth=" + networkBandwidth + ", blockSizeMb=" + blockSizeMb + ", fileReplication=" + fileReplication + '}';
     }
 
   public String print()
     {
-    return inputSizeMb + "\t" + shuffleSizeMb + "\t" + outputSizeMb + "\t" + numMappers + "\t" + numReducers;
+    return inputSizeMb + "\t" + shuffleSizeMb + "\t" + outputSizeMb + "\t" + numMappers + "\t" + numReducers + "\t" + networkBandwidth + "\t" + blockSizeMb + "\t" + fileReplication;
     }
 
   public String printFields()
     {
-    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 4 ];
+    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 4 ] + "\t" + fields[ 5 ] + "\t" + fields[ 6 ] + "\t" + fields[ 7 ];
     }
   }

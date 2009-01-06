@@ -22,6 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
+import concurrentinc.simulator.JobParams;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,22 +44,27 @@ public class Job
   int fileReplication = 3;
   int blockSizeMb = 128;
 
+  float networkBandwidth = 10 * 1024; // Mb / sec
+
   float mapProcessingFactor = 100; // Mb / sec
   float reduceProcessingFactor = 100; // Mb / sec
 
-  float networkFactor = 10 * 1024; // Mb / sec
   long sortBlockSizeMb = 100;
+
   private Set<MapProcess> maps;
   private Set<ReduceProcess> reduces;
   private Cluster cluster;
 
-  public Job( long inputSizeMb, long shuffleSizeMb, long outputSizeMb, int numMappers, int numReducers )
+  public Job( JobParams params )
     {
-    this.inputSizeMb = inputSizeMb;
-    this.shuffleSizeMb = shuffleSizeMb;
-    this.outputSizeMb = outputSizeMb;
-    this.numMappers = numMappers;
-    this.numReducers = numReducers;
+    this.inputSizeMb = params.inputSizeMb;
+    this.shuffleSizeMb = params.shuffleSizeMb;
+    this.outputSizeMb = params.outputSizeMb;
+    this.numMappers = params.numMappers;
+    this.numReducers = params.numReducers;
+    this.networkBandwidth = params.networkBandwidth;
+    this.blockSizeMb = params.blockSizeMb;
+    this.fileReplication = params.fileReplication;
     }
 
   int getNumMappers()
@@ -104,7 +110,7 @@ public class Job
     long size = inputSizeMb;
     long subBlockSize = (long) Math.floor( inputSizeMb / getNumMappers() );
 
-    DistributedData data = new DistributedData( networkFactor, inputSizeMb, blockSizeMb, fileReplication );
+    DistributedData data = new DistributedData( networkBandwidth, inputSizeMb, blockSizeMb, fileReplication );
 
     for( int i = 0; i < getNumMappers(); i++ )
       {
@@ -125,11 +131,11 @@ public class Job
     long toProcess = shuffleSizeMb / getNumReducers(); // assume even distribution
     long toWrite = outputSizeMb / getNumReducers();
 
-    DistributedData data = new DistributedData( networkFactor, fileReplication );
+    DistributedData data = new DistributedData( networkBandwidth, fileReplication );
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
-      Shuffler shuffler = new Shuffler( networkFactor, sortBlockSizeMb, getNumMappers(), toProcess );
+      Shuffler shuffler = new Shuffler( networkBandwidth, sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, reduceProcessingFactor, toProcess, toWrite );
       reduces.add( new ReduceProcess( this, shuffler, reducer ) );
       }

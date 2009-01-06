@@ -32,22 +32,22 @@ public class DistributedData
   {
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
-  float networkFactor;
+  float networkBandwidth;
   long sizeMb;
   long blockSizeMb;
   int fileReplication;
 
   long readCounter;
 
-  public DistributedData( float networkFactor, int fileReplication )
+  public DistributedData( float networkBandwidth, int fileReplication )
     {
-    this.networkFactor = networkFactor;
+    this.networkBandwidth = networkBandwidth;
     this.fileReplication = fileReplication;
     }
 
-  public DistributedData( float networkFactor, long sizeMb, long blockSizeMb, int fileReplication )
+  public DistributedData( float networkBandwidth, long sizeMb, long blockSizeMb, int fileReplication )
     {
-    this.networkFactor = networkFactor;
+    this.networkBandwidth = networkBandwidth;
     this.sizeMb = sizeMb;
     this.blockSizeMb = blockSizeMb;
     this.fileReplication = fileReplication;
@@ -68,7 +68,7 @@ public class DistributedData
     if( readCounter++ < getNumReplicatedBlocks() )
       return;
 
-    float readSleep = amountMb / networkFactor * 1000;
+    float readSleep = amountMb / networkBandwidth * 1000;
 
     if( LOG.isDebugEnabled() )
       LOG.debug( "readSleep = " + readSleep );
@@ -78,7 +78,7 @@ public class DistributedData
 
   public void write( long amountMb )
     {
-    float writeSleep = amountMb / networkFactor * fileReplication * 1000;
+    float writeSleep = amountMb * fileReplication / networkBandwidth * 1000;
 
     if( LOG.isDebugEnabled() )
       LOG.debug( "writeSleep = " + writeSleep );
