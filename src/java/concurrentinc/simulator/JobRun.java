@@ -26,6 +26,8 @@ import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
 import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.params.ClusterParams;
+import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.util.Printable;
 import concurrentinc.simulator.util.Printer;
 import org.joda.time.Instant;

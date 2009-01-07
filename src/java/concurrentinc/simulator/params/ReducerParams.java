@@ -19,7 +19,7 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.params;
 
 import concurrentinc.simulator.util.Printable;
 

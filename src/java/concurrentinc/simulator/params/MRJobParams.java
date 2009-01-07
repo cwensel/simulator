@@ -19,28 +19,33 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
+package concurrentinc.simulator.params;
 
 import concurrentinc.simulator.util.Printable;
 
 /**
  *
  */
-public class MapperParams extends Printable
+public class MRJobParams extends Printable
   {
-  public int numProcesses = 1; // requested num processes
-  public float processingBandwidth = 100; // Mb /sec processing bandwidth
-  public float dataFactor = 1.0f; // does it create or destroy data
+  public MapperParams mapper;
+  public ReducerParams reducer;
 
-  public MapperParams( int numProcesses )
+  public MRJobParams( MapperParams mapper, ReducerParams reducer )
     {
-    this.numProcesses = numProcesses;
+    this.mapper = mapper;
+    this.reducer = reducer;
     }
 
-  public MapperParams( int numProcesses, float dataFactor, float processingBandwidth )
+  public MRJobParams( int numProcessesMapper, float dataFactorMapper, float processingBandwidthMapper, int numProcessesReducer, float dataFactorReducer, float processingBandwidthReducer )
     {
-    this.numProcesses = numProcesses;
-    this.processingBandwidth = processingBandwidth;
-    this.dataFactor = dataFactor;
+    this.mapper = new MapperParams( numProcessesMapper, dataFactorMapper, processingBandwidthMapper );
+    this.reducer = new ReducerParams( numProcessesReducer, dataFactorReducer, processingBandwidthReducer );
+    }
+
+  public MRJobParams( int numProcessesMapper, int numProcessesReducer )
+    {
+    this.mapper = new MapperParams( numProcessesMapper );
+    this.reducer = new ReducerParams( numProcessesReducer );
     }
   }

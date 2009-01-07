@@ -26,6 +26,8 @@ import com.hellblazer.primeMover.test.SimulationTests;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
 import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.MRJobParams;
 import org.joda.time.Instant;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;

@@ -22,6 +22,9 @@
 package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.runtime.SimulationException;
+import concurrentinc.simulator.params.ClusterParams;
+import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.MRJobParams;
 
 import java.io.PrintWriter;
 import java.util.Random;

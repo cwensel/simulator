@@ -22,7 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
-import concurrentinc.simulator.JobParams;
+import concurrentinc.simulator.params.JobParams;
 
 import java.util.Collection;
 import java.util.HashSet;
