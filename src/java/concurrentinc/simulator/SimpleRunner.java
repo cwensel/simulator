@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 /**
  *
  */
-public class Runner
+public class SimpleRunner
   {
   public static void run( PrintWriter writer, JobParams start, JobParams end, JobParams increment, float sample ) throws ExecutionException, InterruptedException, SimulationException
     {

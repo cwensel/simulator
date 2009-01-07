@@ -40,7 +40,7 @@ public class Dump
     TransformingClassLoader transformingClassLoader = new TransformingClassLoader( loader, loader );
     Thread.currentThread().setContextClassLoader( transformingClassLoader );
 
-    Class<?> runnerType = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
+    Class<?> runnerType = transformingClassLoader.loadClass( "concurrentinc.simulator.SimpleRunner" );
     Class<?> jobParamsType = transformingClassLoader.loadClass( "concurrentinc.simulator.JobParams" );
     Method method = runnerType.getDeclaredMethod( "run", PrintWriter.class, jobParamsType, jobParamsType, jobParamsType, float.class );
 
