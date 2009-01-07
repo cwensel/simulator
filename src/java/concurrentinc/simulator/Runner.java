@@ -41,36 +41,36 @@ public class Runner
 
     for( int inputSizeMb = start.inputSizeMb; inputSizeMb <= end.inputSizeMb; inputSizeMb += increment.inputSizeMb )
       {
-//      for( int shuffleSizeMb = start.shuffleSizeMb; shuffleSizeMb <= end.shuffleSizeMb; shuffleSizeMb += increment.shuffleSizeMb )
-//        {
-//        for( int outputSizeMb = start.outputSizeMb; outputSizeMb <= end.outputSizeMb; outputSizeMb += increment.outputSizeMb )
-//          {
-      for( int numMappers = start.mrParams.mapper.numProcesses; numMappers <= end.mrParams.mapper.numProcesses; numMappers += increment.mrParams.mapper.numProcesses )
+      for( float mapperDataFactor = start.mrParams.mapper.dataFactor; mapperDataFactor <= end.mrParams.mapper.dataFactor; mapperDataFactor += increment.mrParams.mapper.dataFactor )
         {
-        for( int numReducers = start.mrParams.reducer.numProcesses; numReducers <= end.mrParams.reducer.numProcesses; numReducers += increment.mrParams.reducer.numProcesses )
+        for( float reducerDataFactor = start.mrParams.reducer.dataFactor; reducerDataFactor <= end.mrParams.reducer.dataFactor; reducerDataFactor += increment.mrParams.reducer.dataFactor )
           {
-          if( !first && sample != 1.0 && random.nextFloat() > sample )
-            continue;
-
-          MRJobParams mrParams = new MRJobParams( numMappers, numReducers );
-          JobParams params = new JobParams( inputSizeMb, mrParams );
-
-          JobRun run = new JobRun( params );
-
-          run.run( clusterParams );
-
-          if( first )
+          for( int numMappers = start.mrParams.mapper.numProcesses; numMappers <= end.mrParams.mapper.numProcesses; numMappers += increment.mrParams.mapper.numProcesses )
             {
-            writer.println( run.printFields() );
-            first = false;
-            }
+            for( int numReducers = start.mrParams.reducer.numProcesses; numReducers <= end.mrParams.reducer.numProcesses; numReducers += increment.mrParams.reducer.numProcesses )
+              {
+              if( !first && sample != 1.0 && random.nextFloat() > sample )
+                continue;
 
-          writer.println( run.print() );
+              MRJobParams mrParams = new MRJobParams( numMappers, numReducers );
+              JobParams params = new JobParams( inputSizeMb, mrParams );
+
+              JobRun run = new JobRun( params );
+
+              run.run( clusterParams );
+
+              if( first )
+                {
+                writer.println( run.printFields() );
+                first = false;
+                }
+
+              writer.println( run.print() );
+              }
+            }
           }
         }
       }
-//        }
-//      }
     }
 
   }
