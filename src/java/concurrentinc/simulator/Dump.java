@@ -40,23 +40,27 @@ public class Dump
     TransformingClassLoader transformingClassLoader = new TransformingClassLoader( loader, loader );
     Thread.currentThread().setContextClassLoader( transformingClassLoader );
 
-    Class<?> runner = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
-    Class<?> params = transformingClassLoader.loadClass( "concurrentinc.simulator.JobParams" );
-    Method method = runner.getDeclaredMethod( "run", PrintWriter.class, params, params, params, float.class );
-
+    Class<?> runnerType = transformingClassLoader.loadClass( "concurrentinc.simulator.Runner" );
+    Class<?> jobParamsType = transformingClassLoader.loadClass( "concurrentinc.simulator.JobParams" );
+    Method method = runnerType.getDeclaredMethod( "run", PrintWriter.class, jobParamsType, jobParamsType, jobParamsType, float.class );
 
     PrintWriter printWriter = new PrintWriter( System.out );
 
     if( args.length == 1 )
       printWriter = new PrintWriter( new FileWriter( args[ 0 ] ) );
 
-    Constructor<?> constructor = params.getConstructor( int.class, int.class, int.class, int.class, int.class );
+    Class<?> mrParamsType = transformingClassLoader.loadClass( "concurrentinc.simulator.MRJobParams" );
 
-//    Object start = constructor.newInstance( 1, 1, 1, 1, 1 );
-    Object start = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1, 1 );
-    Object end = constructor.newInstance( 1 * 1024 * 1024, 1 * 1024 * 1024, 1 * 1024 * 1024, 1001, 1001 );
-//    Object increment = constructor.newInstance( 1024 * 500, 1024 * 500, 1024 * 500, 50, 50 );
-    Object increment = constructor.newInstance( 1024, 1024, 1024, 5, 5 );
+    Constructor<?> mrCtor = mrParamsType.getConstructor( int.class, int.class );
+    Constructor<?> jobCtor = jobParamsType.getConstructor( int.class, mrParamsType );
+
+    Object mrParamsStart = mrCtor.newInstance( 1, 1 );
+    Object mrParamsEnd = mrCtor.newInstance( 1001, 1001 );
+    Object mrParamsIncrement = mrCtor.newInstance( 5, 5 );
+
+    Object start = jobCtor.newInstance( 1 * 1024 * 1024, mrParamsStart );
+    Object end = jobCtor.newInstance( 1 * 1024 * 1024, mrParamsEnd );
+    Object increment = jobCtor.newInstance( 1024, mrParamsIncrement );
 
     float sample = 0.01f;
 

@@ -163,7 +163,7 @@
 
   <!-- removes build -->
   <target name="nuke">
-    <echo message="nuking cascade..."/>
+    <echo message="nuking..."/>
     <delete dir="${build}"/>
     <delete dir="${javadoc}"/>
     <delete dir="${dist}"/>
@@ -180,14 +180,14 @@
 
   <target name="resolve" description="--> retrieve dependencies with ivy">
 
-    <ivy:settings file="etc/ivysettings.xml" />
+    <ivy:settings file="etc/ivysettings.xml"/>
     <ivy:retrieve pattern="${ivy.lib.dir}/[artifact].[ext]"/>
 
   </target>
 
-	<target name="clean-cache" description="--> clean the ivy cache">
-		<ivy:settings file="etc/ivysettings.xml" />
-		<ivy:cleancache />
-	</target>
+  <target name="clean-cache" description="--> clean the ivy cache">
+    <ivy:settings file="etc/ivysettings.xml"/>
+    <ivy:cleancache/>
+  </target>
 
 </project>

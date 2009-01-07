@@ -45,7 +45,8 @@ public class SimpleTest extends SimulationTests
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
-    JobParams params = new JobParams( TERA, TERA, TERA, 100, 100 );
+    MRJobParams mrParams = new MRJobParams( 100, 100 );
+    JobParams params = new JobParams( TERA, mrParams );
     Job job = new Job( params );
 //    Job job = new Job( MEGA, MEGA, MEGA, 100, 1 );
     Cluster cluster = new Cluster( 100, 100 );

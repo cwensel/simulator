@@ -21,58 +21,31 @@
 
 package concurrentinc.simulator;
 
-import java.util.Arrays;
+import concurrentinc.simulator.util.Printable;
 
 /**
  *
  */
-public class JobParams
+public class JobParams extends Printable
   {
-  private String[] fields = new String[]{"inputSizeMb", "shuffleSizeMb", "outputSizeMb", "numMappers", "numReducers", "networkBandwidth", "blockSizeMb", "fileReplication"};
-
   public int inputSizeMb;
-  public int shuffleSizeMb;
-  public int outputSizeMb;
-  public int numMappers;
-  public int numReducers;
+  public MRJobParams mrParams;
   public float networkBandwidth = 10 * 1024; // Mb / sec;
   public int blockSizeMb = 128;
   public int fileReplication = 3;
 
-  public JobParams( int inputSizeMb, int shuffleSizeMb, int outputSizeMb, int numMappers, int numReducers )
+  public JobParams( int inputSizeMb, MRJobParams mrParams )
     {
     this.inputSizeMb = inputSizeMb;
-    this.shuffleSizeMb = shuffleSizeMb;
-    this.outputSizeMb = outputSizeMb;
-    this.numMappers = numMappers;
-    this.numReducers = numReducers;
+    this.mrParams = mrParams;
     }
 
-  public JobParams( int inputSizeMb, int shuffleSizeMb, int outputSizeMb, int numMappers, int numReducers, float networkBandwidth, int blockSizeMb, int fileReplication )
+  public JobParams( int inputSizeMb, MRJobParams mrParams, float networkBandwidth, int blockSizeMb, int fileReplication )
     {
     this.inputSizeMb = inputSizeMb;
-    this.shuffleSizeMb = shuffleSizeMb;
-    this.outputSizeMb = outputSizeMb;
-    this.numMappers = numMappers;
-    this.numReducers = numReducers;
+    this.mrParams = mrParams;
     this.networkBandwidth = networkBandwidth;
     this.blockSizeMb = blockSizeMb;
     this.fileReplication = fileReplication;
-    }
-
-  @Override
-  public String toString()
-    {
-    return "JobParams{" + "fields=" + ( fields == null ? null : Arrays.asList( fields ) ) + ", inputSizeMb=" + inputSizeMb + ", shuffleSizeMb=" + shuffleSizeMb + ", outputSizeMb=" + outputSizeMb + ", numMappers=" + numMappers + ", numReducers=" + numReducers + ", networkBandwidth=" + networkBandwidth + ", blockSizeMb=" + blockSizeMb + ", fileReplication=" + fileReplication + '}';
-    }
-
-  public String print()
-    {
-    return inputSizeMb + "\t" + shuffleSizeMb + "\t" + outputSizeMb + "\t" + numMappers + "\t" + numReducers + "\t" + networkBandwidth + "\t" + blockSizeMb + "\t" + fileReplication;
-    }
-
-  public String printFields()
-    {
-    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + fields[ 4 ] + "\t" + fields[ 5 ] + "\t" + fields[ 6 ] + "\t" + fields[ 7 ];
     }
   }

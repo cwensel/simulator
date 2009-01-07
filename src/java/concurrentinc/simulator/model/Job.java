@@ -58,10 +58,10 @@ public class Job
   public Job( JobParams params )
     {
     this.inputSizeMb = params.inputSizeMb;
-    this.shuffleSizeMb = params.shuffleSizeMb;
-    this.outputSizeMb = params.outputSizeMb;
-    this.numMappers = params.numMappers;
-    this.numReducers = params.numReducers;
+    this.shuffleSizeMb = (long) ( params.mrParams.mapper.dataFactor * this.inputSizeMb );
+    this.outputSizeMb = (long) ( params.mrParams.reducer.dataFactor * this.shuffleSizeMb );
+    this.numMappers = params.mrParams.mapper.numProcesses;
+    this.numReducers = params.mrParams.reducer.numProcesses;
     this.networkBandwidth = params.networkBandwidth;
     this.blockSizeMb = params.blockSizeMb;
     this.fileReplication = params.fileReplication;

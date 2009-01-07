@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -19,21 +19,11 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator;
-
-import concurrentinc.simulator.util.Printable;
+package concurrentinc.simulator.model;
 
 /**
  *
  */
-public class ClusterParams extends Printable
+public class Network
   {
-  int maxMapProcesses;
-  int maxReduceProcesses;
-
-  public ClusterParams( int maxMapProcesses, int maxReduceProcesses )
-    {
-    this.maxMapProcesses = maxMapProcesses;
-    this.maxReduceProcesses = maxReduceProcesses;
-    }
   }

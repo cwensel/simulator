@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -26,14 +26,21 @@ import concurrentinc.simulator.util.Printable;
 /**
  *
  */
-public class ClusterParams extends Printable
+public class MapperParams extends Printable
   {
-  int maxMapProcesses;
-  int maxReduceProcesses;
+  public int numProcesses = 1; // requested num processes
+  public float processingBandwidth = 100; // Mb /sec processing bandwidth
+  public float dataFactor = 1.0f; // does it create or destroy data
 
-  public ClusterParams( int maxMapProcesses, int maxReduceProcesses )
+  public MapperParams( int numProcesses )
     {
-    this.maxMapProcesses = maxMapProcesses;
-    this.maxReduceProcesses = maxReduceProcesses;
+    this.numProcesses = numProcesses;
+    }
+
+  public MapperParams( int numProcesses, float dataFactor, float processingBandwidth )
+    {
+    this.numProcesses = numProcesses;
+    this.processingBandwidth = processingBandwidth;
+    this.dataFactor = dataFactor;
     }
   }

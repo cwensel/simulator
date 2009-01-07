@@ -26,6 +26,8 @@ import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
 import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.util.Printer;
 import org.joda.time.Instant;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
@@ -38,7 +40,24 @@ import java.util.concurrent.ExecutionException;
  */
 public class JobRun
   {
-  private String[] fields = new String[]{"startTime", "endTime", "duration", "durationSeconds"};
+  public class RunResults extends Printable
+    {
+    public Instant startTime;
+    public Instant endTime;
+    public Period duration;
+    public int durationSeconds;
+    public JobParams params;
+
+    RunResults( Instant startTime, Instant endTime, Period duration, int durationSeconds, JobParams params )
+      {
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.duration = duration;
+      this.durationSeconds = durationSeconds;
+      this.params = params;
+      }
+    }
+
   private Instant startTime;
   private Instant endTime;
   private JobParams params;
@@ -98,19 +117,13 @@ public class JobRun
     setEndTime( controller.getCurrentTime() );
     }
 
-  @Override
-  public String toString()
-    {
-    return "JobRun{" + "startTime=" + startTime + ", endTime=" + endTime + ", params=" + params + '}';
-    }
-
   public String print()
     {
-    return startTime + "\t" + endTime + "\t" + getDuration() + "\t" + getDurationSeconds().getSeconds() + "\t" + params.print();
+    return new RunResults( startTime, endTime, getDuration(), getDurationSeconds().getSeconds(), params ).print();
     }
 
   public String printFields()
     {
-    return fields[ 0 ] + "\t" + fields[ 1 ] + "\t" + fields[ 2 ] + "\t" + fields[ 3 ] + "\t" + params.printFields();
+    return Printer.printFields( RunResults.class );
     }
   }

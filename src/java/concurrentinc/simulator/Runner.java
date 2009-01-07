@@ -41,35 +41,36 @@ public class Runner
 
     for( int inputSizeMb = start.inputSizeMb; inputSizeMb <= end.inputSizeMb; inputSizeMb += increment.inputSizeMb )
       {
-      for( int shuffleSizeMb = start.shuffleSizeMb; shuffleSizeMb <= end.shuffleSizeMb; shuffleSizeMb += increment.shuffleSizeMb )
+//      for( int shuffleSizeMb = start.shuffleSizeMb; shuffleSizeMb <= end.shuffleSizeMb; shuffleSizeMb += increment.shuffleSizeMb )
+//        {
+//        for( int outputSizeMb = start.outputSizeMb; outputSizeMb <= end.outputSizeMb; outputSizeMb += increment.outputSizeMb )
+//          {
+      for( int numMappers = start.mrParams.mapper.numProcesses; numMappers <= end.mrParams.mapper.numProcesses; numMappers += increment.mrParams.mapper.numProcesses )
         {
-        for( int outputSizeMb = start.outputSizeMb; outputSizeMb <= end.outputSizeMb; outputSizeMb += increment.outputSizeMb )
+        for( int numReducers = start.mrParams.reducer.numProcesses; numReducers <= end.mrParams.reducer.numProcesses; numReducers += increment.mrParams.reducer.numProcesses )
           {
-          for( int numMappers = start.numMappers; numMappers <= end.numMappers; numMappers += increment.numMappers )
+          if( !first && sample != 1.0 && random.nextFloat() > sample )
+            continue;
+
+          MRJobParams mrParams = new MRJobParams( numMappers, numReducers );
+          JobParams params = new JobParams( inputSizeMb, mrParams );
+
+          JobRun run = new JobRun( params );
+
+          run.run( clusterParams );
+
+          if( first )
             {
-            for( int numReducers = start.numReducers; numReducers <= end.numReducers; numReducers += increment.numReducers )
-              {
-              if( !first && sample != 1.0 && random.nextFloat() > sample )
-                continue;
-
-              JobParams params = new JobParams( inputSizeMb, shuffleSizeMb, outputSizeMb, numMappers, numReducers );
-
-              JobRun run = new JobRun( params );
-
-              run.run( clusterParams );
-
-              if( first )
-                {
-                writer.println( run.printFields() );
-                first = false;
-                }
-
-              writer.println( run.print() );
-              }
+            writer.println( run.printFields() );
+            first = false;
             }
+
+          writer.println( run.print() );
           }
         }
       }
+//        }
+//      }
     }
 
   }
