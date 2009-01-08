@@ -74,7 +74,7 @@ public class SimpleTest extends SimulationTests
     {
     JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ) );
 
-    JobRun jobRun = new JobRun( params );
+    JobSimulationRunner jobRun = new JobSimulationRunner( params );
 
     jobRun.run( new ClusterParams( 100, 100 ) );
 
@@ -90,7 +90,7 @@ public class SimpleTest extends SimulationTests
     {
     JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ), new MRJobParams( 100, 100 ) );
 
-    JobRun jobRun = new JobRun( params );
+    JobSimulationRunner jobRun = new JobSimulationRunner( params );
 
     jobRun.run( new ClusterParams( 100, 100 ) );
 

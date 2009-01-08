@@ -57,17 +57,17 @@ public class SimpleRunner
 
               JobParams jobParams = new JobParams( inputSizeMb, new MRJobParams( numMappers, numReducers ) );
 
-              JobRun run = new JobRun( jobParams );
+              JobSimulationRunner runner = new JobSimulationRunner( jobParams );
 
-              run.run( clusterParams );
+              runner.run( clusterParams );
 
               if( first )
                 {
-                writer.println( run.printFields() );
+                writer.println( runner.printFields() );
                 first = false;
                 }
 
-              writer.println( run.print() );
+              writer.println( runner.print() );
               }
             }
           }

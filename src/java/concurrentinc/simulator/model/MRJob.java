@@ -91,6 +91,11 @@ public class MRJob
     return mrJobParams.reducer.numProcesses;
     }
 
+  public DistributedData getInputData()
+    {
+    return inputData;
+    }
+
   public void startJob( Cluster cluster )
     {
     this.cluster = cluster;

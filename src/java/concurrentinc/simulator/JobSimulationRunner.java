@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutionException;
 /**
  *
  */
-public class JobRun
+public class JobSimulationRunner
   {
   public class RunResults extends PrintableImpl
     {
@@ -65,7 +65,7 @@ public class JobRun
   private Instant endTime;
   private JobParams params;
 
-  public JobRun( JobParams params )
+  public JobSimulationRunner( JobParams params )
     {
     this.params = params;
     }
