@@ -52,18 +52,9 @@ public class Cluster
   Queue<MapProcess> mapQueue = new LinkedList<MapProcess>();
   Queue<ReduceProcess> reduceQueue = new LinkedList<ReduceProcess>();
 
-  public Cluster()
-    {
-    }
-
-  public Cluster( int maxMapProcesses, int maxReduceProcesses )
-    {
-    this.maxMapProcesses = maxMapProcesses;
-    this.maxReduceProcesses = maxReduceProcesses;
-    }
-
   public Cluster( ClusterParams clusterParams )
     {
+    this.network = new Network( clusterParams.networkParams );
     this.maxMapProcesses = clusterParams.maxMapProcesses;
     this.maxReduceProcesses = clusterParams.maxReduceProcesses;
     }
@@ -135,7 +126,7 @@ public class Cluster
 
     try
       {
-      mapQueue.remove().execute();
+      mapQueue.remove().execute( network );
       }
     catch( InterruptedException e )
       {
@@ -185,7 +176,7 @@ public class Cluster
 
     try
       {
-      reduceQueue.remove().execute();
+      reduceQueue.remove().execute( network );
       }
     catch( InterruptedException e )
       {

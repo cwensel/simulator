@@ -26,7 +26,6 @@ import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
 import concurrentinc.simulator.model.Job;
-import concurrentinc.simulator.model.Network;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.util.PrintableImpl;
@@ -107,8 +106,7 @@ public class JobSimulationRunner
 
     Framework.setController( controller );
 
-    Network network = new Network();
-    Cluster cluster = new Cluster( network, clusterParams );
+    Cluster cluster = new Cluster( clusterParams );
 
     Job job = new Job( cluster, params );
 

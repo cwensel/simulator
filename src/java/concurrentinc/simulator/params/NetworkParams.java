@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -19,33 +19,21 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator.model;
-
-import com.hellblazer.primeMover.Entity;
+package concurrentinc.simulator.params;
 
 /**
  *
  */
-@Entity
-public class ReduceProcess
+public class NetworkParams
   {
-  MRJob job;
-  Shuffler shuffler;
-  Reducer reducer;
+  public int bandwidth = 10 * 1024; // Mb / sec;;
 
-  public ReduceProcess( MRJob job, Shuffler shuffler, Reducer reducer )
+  public NetworkParams()
     {
-    this.job = job;
-    this.shuffler = shuffler;
-    this.reducer = reducer;
     }
 
-  public void execute( Network network ) throws InterruptedException
+  public NetworkParams( int bandwidth )
     {
-    shuffler.execute( network );
-    reducer.execute( network );
-
-    job.releaseReduce( this );
+    this.bandwidth = bandwidth;
     }
-
   }

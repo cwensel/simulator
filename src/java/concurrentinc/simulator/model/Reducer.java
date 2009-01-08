@@ -45,15 +45,15 @@ public class Reducer
     this.outputSizeMb = outputSizeMb;
     }
 
-  public void execute()
+  public void execute( Network network )
     {
     blockProcessing();
-    blockWriting();
+    blockWriting( network );
     }
 
-  private void blockWriting()
+  private void blockWriting( Network network )
     {
-    data.write( outputSizeMb );
+    data.write( network, outputSizeMb );
     }
 
   private void blockProcessing()

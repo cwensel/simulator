@@ -32,30 +32,23 @@ public class Shuffler
   {
   private static final Logger LOG = LoggerFactory.getLogger( Shuffler.class );
 
-  private float sortFactor = 1024; // Gb / sec
-  private float networkFactor;
+  private float sortFactor = 1024; // Mb / sec
   long sortBlockSizeMb;
   int numMappers;
   long sizeMb;
 
-  public Shuffler( float networkFactor, long sortBlockSizeMb, int numMappers, long sizeMb )
+  public Shuffler( long sortBlockSizeMb, int numMappers, long sizeMb )
     {
-    this.networkFactor = networkFactor;
     this.sortBlockSizeMb = sortBlockSizeMb;
     this.numMappers = numMappers;
     this.sizeMb = sizeMb;
     }
 
-  public void execute()
+  public void execute( Network network )
     {
     // fetch
     // should fetch through network object
-    float fetchSleep = sizeMb / networkFactor * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "fetchSleep = " + fetchSleep );
-
-    Kronos.sleep( (long) fetchSleep );
+    network.read( sizeMb );
 
     // sort
     // assumes O(n log n)

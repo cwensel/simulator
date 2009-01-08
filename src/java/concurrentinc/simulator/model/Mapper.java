@@ -43,15 +43,15 @@ public class Mapper
     this.sizeMb = sizeMb;
     }
 
-  public void execute()
+  public void execute( Network network )
     {
-    blockReadingData();
+    blockReadingData( network );
     blockProcessingData();
     }
 
-  private void blockReadingData()
+  private void blockReadingData( Network network )
     {
-    data.read( sizeMb );
+    data.read( network, sizeMb );
     }
 
   private void blockProcessingData()

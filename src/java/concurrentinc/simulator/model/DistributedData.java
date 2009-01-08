@@ -21,7 +21,6 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Kronos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,6 @@ public class DistributedData
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
   public int sizeMb;
-  public float networkBandwidth = 10 * 1024;  // should be delegated to network object
   public int blockSizeMb = 128;
   public int fileReplication = 3;
 
@@ -51,20 +49,6 @@ public class DistributedData
     this.fileReplication = fileReplication;
     }
 
-  public DistributedData( float networkBandwidth, int fileReplication )
-    {
-    this.networkBandwidth = networkBandwidth;
-    this.fileReplication = fileReplication;
-    }
-
-  public DistributedData( float networkBandwidth, int sizeMb, int blockSizeMb, int fileReplication )
-    {
-    this.networkBandwidth = networkBandwidth;
-    this.sizeMb = sizeMb;
-    this.blockSizeMb = blockSizeMb;
-    this.fileReplication = fileReplication;
-    }
-
   private int getNumBlocks()
     {
     return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
@@ -75,26 +59,16 @@ public class DistributedData
     return getNumBlocks() * fileReplication;
     }
 
-  public void read( long amountMb )
+  public void read( Network network, long amountMb )
     {
     if( readCounter++ < getNumReplicatedBlocks() )
       return;
 
-    float readSleep = amountMb / networkBandwidth * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "readSleep = " + readSleep );
-
-    Kronos.sleep( (long) readSleep );
+    network.read( amountMb );
     }
 
-  public void write( long amountMb )
+  public void write( Network network, long amountMb )
     {
-    float writeSleep = amountMb * fileReplication / networkBandwidth * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "writeSleep = " + writeSleep );
-
-    Kronos.sleep( (long) writeSleep );
+    network.write( amountMb * fileReplication );
     }
   }

@@ -25,6 +25,7 @@ import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.params.MRJobParams;
+import concurrentinc.simulator.params.NetworkParams;
 
 import java.io.PrintWriter;
 import java.util.Random;
@@ -40,7 +41,8 @@ public class SimpleRunner
     Random random = new Random();
     boolean first = true;
 
-    ClusterParams clusterParams = new ClusterParams( 100, 100 );
+    NetworkParams networkParams = new NetworkParams( 10 * 1024 );
+    ClusterParams clusterParams = new ClusterParams( networkParams, 100, 100 );
 
     for( int inputSizeMb = start.getInputSizeMB(); inputSizeMb <= end.getInputSizeMB(); inputSizeMb += increment.getInputSizeMB() )
       {

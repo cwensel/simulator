@@ -61,11 +61,6 @@ public class MRJob
     return inputData.fileReplication;
     }
 
-  private float getNetworkBandwidth()
-    {
-    return inputData.networkBandwidth;
-    }
-
   private int getOutputSizeMb()
     {
     return (int) ( mrJobParams.reducer.dataFactor * getShuffleSizeMb() );
@@ -136,12 +131,12 @@ public class MRJob
       channel.put( "done" );
     }
 
-  public void startMaps()
+  private void startMaps()
     {
     cluster.executeMaps( getMapProcesses() );
     }
 
-  public void startReduces()
+  private void startReduces()
     {
     cluster.executeReduces( getReduceProcesses() );
     }
@@ -153,7 +148,7 @@ public class MRJob
     int size = getInputSizeMB();
     int subBlockSize = (int) Math.floor( getInputSizeMB() / getNumMappers() );
 
-    DistributedData data = new DistributedData( getNetworkBandwidth(), getInputSizeMB(), getBlockSizeMb(), getFileReplication() );
+    DistributedData data = new DistributedData( getInputSizeMB(), getBlockSizeMb(), getFileReplication() );
 
     for( int i = 0; i < getNumMappers(); i++ )
       {
@@ -174,11 +169,11 @@ public class MRJob
     long toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
     long toWrite = getOutputSizeMb() / getNumReducers();
 
-    DistributedData data = new DistributedData( getNetworkBandwidth(), getFileReplication() );
+    DistributedData data = new DistributedData( getFileReplication() );
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
-      Shuffler shuffler = new Shuffler( getNetworkBandwidth(), mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
+      Shuffler shuffler = new Shuffler( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, mrJobParams.reducer.processingBandwidth, toProcess, toWrite );
       reduces.add( new ReduceProcess( this, shuffler, reducer ) );
       }

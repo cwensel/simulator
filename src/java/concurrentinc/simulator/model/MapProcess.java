@@ -38,9 +38,9 @@ public class MapProcess
     this.mapper = mapper;
     }
 
-  public void execute() throws InterruptedException
+  public void execute( Network network ) throws InterruptedException
     {
-    mapper.execute();
+    mapper.execute( network );
 
     job.releaseMap( this );
     }

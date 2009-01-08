@@ -21,19 +21,48 @@
 
 package concurrentinc.simulator.model;
 
+import com.hellblazer.primeMover.Kronos;
+import concurrentinc.simulator.params.NetworkParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  */
+//@Entity
 public class Network
   {
-  int bandwidth = 10 * 1024; // Mb / sec;;
+  private static final Logger LOG = LoggerFactory.getLogger( Network.class );
+  NetworkParams networkParams;
 
   public Network()
     {
     }
 
-  public Network( int bandwidth )
+  public Network( NetworkParams networkParams )
     {
-    this.bandwidth = bandwidth;
+    this.networkParams = networkParams;
+    }
+
+  //  @Blocking
+  public void read( long sizeMb )
+    {
+    float readSleep = sizeMb / networkParams.bandwidth * 1000;
+
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "readSleep = " + readSleep );
+
+    Kronos.sleep( (long) readSleep );
+    }
+
+  //  @Blocking
+  public void write( long amountMb )
+    {
+    float writeSleep = amountMb / networkParams.bandwidth * 1000;
+
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "writeSleep = " + writeSleep );
+
+    Kronos.sleep( (long) writeSleep );
     }
   }
