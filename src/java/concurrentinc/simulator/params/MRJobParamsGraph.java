@@ -36,11 +36,26 @@ import java.util.List;
  */
 public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> implements Printable
   {
-  public MRJobParamsGraph( MRJobParams jobParams )
+  public MRJobParamsGraph( MRJobParams... jobParams )
     {
     this();
 
-    addVertex( jobParams );
+    addChained( jobParams );
+    }
+
+  public void addChained( MRJobParams... jobParams )
+    {
+    MRJobParams last = null;
+
+    for( MRJobParams jobParam : jobParams )
+      {
+      addVertex( jobParam );
+
+      if( last != null )
+        addEdge( last, jobParam );
+
+      last = jobParam;
+      }
     }
 
   public MRJobParamsGraph()

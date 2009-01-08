@@ -34,7 +34,7 @@ public class JobParams extends PrintableImpl
   public DistributedData distributedData;
   public MRJobParamsGraph mrParams;
 
-  public JobParams( int inputSizeMb, MRJobParams mrParams )
+  public JobParams( int inputSizeMb, MRJobParams... mrParams )
     {
     this.distributedData = new DistributedData( inputSizeMb );
     this.mrParams = new MRJobParamsGraph( mrParams );

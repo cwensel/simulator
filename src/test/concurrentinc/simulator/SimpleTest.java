@@ -85,4 +85,20 @@ public class SimpleTest extends SimulationTests
 
     assertEquals( "PT4M15.071S", jobRun.getDuration().toString() );
     }
+
+  public void testChainedJobRun() throws Exception
+    {
+    JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ), new MRJobParams( 100, 100 ) );
+
+    JobRun jobRun = new JobRun( params );
+
+    jobRun.run( new ClusterParams( 100, 100 ) );
+
+    System.out.println( "start: " + jobRun.getStartTime() );
+
+    System.out.println( "end: " + jobRun.getEndTime() );
+    System.out.println( "duration: " + jobRun.getDuration() );
+
+    assertEquals( "PT4M15.071S", jobRun.getDuration().toString() );
+    }
   }
