@@ -63,6 +63,9 @@ public class SimpleTest extends SimulationTests
 
     Instant endTime = controller.getCurrentTime();
     System.out.println( "end: " + endTime );
-    System.out.println( "duration: " + new Period( startTime, endTime, PeriodType.standard() ) );
+    Period period = new Period( startTime, endTime, PeriodType.standard() );
+    System.out.println( "duration: " + period );
+
+    assertEquals( "PT4M15.071S", period.toString() );
     }
   }
