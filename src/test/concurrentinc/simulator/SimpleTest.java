@@ -27,6 +27,7 @@ import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
 import concurrentinc.simulator.model.MRJob;
 import concurrentinc.simulator.model.Network;
+import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.params.MRJobParams;
 import org.joda.time.Instant;
@@ -45,11 +46,11 @@ public class SimpleTest extends SimulationTests
     {
     SimController controller = new SimController();
     Framework.setController( controller );
-    Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
     JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ) );
-    MRJob job = new MRJob( params.distributedData, params.getMRParams() );
+
+    MRJob mrJob = new MRJob( params.distributedData, params.getMRParams() );
 
     Network network = new Network();
     Cluster cluster = new Cluster( network, 100, 100 );
@@ -57,7 +58,7 @@ public class SimpleTest extends SimulationTests
     Instant startTime = controller.getCurrentTime();
     System.out.println( "start: " + startTime );
 
-    cluster.submitJob( job );
+    cluster.submitJob( mrJob );
 
     controller.eventLoop();
 
@@ -67,5 +68,21 @@ public class SimpleTest extends SimulationTests
     System.out.println( "duration: " + period );
 
     assertEquals( "PT4M15.071S", period.toString() );
+    }
+
+  public void testSimpleJobRun() throws Exception
+    {
+    JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ) );
+
+    JobRun jobRun = new JobRun( params );
+
+    jobRun.run( new ClusterParams( 100, 100 ) );
+
+    System.out.println( "start: " + jobRun.getStartTime() );
+
+    System.out.println( "end: " + jobRun.getEndTime() );
+    System.out.println( "duration: " + jobRun.getDuration() );
+
+    assertEquals( "PT4M15.071S", jobRun.getDuration().toString() );
     }
   }
