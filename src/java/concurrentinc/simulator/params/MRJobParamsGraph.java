@@ -24,6 +24,7 @@ package concurrentinc.simulator.params;
 import concurrentinc.simulator.util.Printable;
 import concurrentinc.simulator.util.Printer;
 import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -43,6 +44,19 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
     addChained( jobParams );
     }
 
+  public MRJobParamsGraph()
+    {
+    super( new EdgeFactory<MRJobParams, Integer>()
+    {
+    int count = 0;
+
+    public Integer createEdge( MRJobParams mrJobParams, MRJobParams mrJobParams1 )
+      {
+      return count++;
+      }
+    } );
+    }
+
   public void addChained( MRJobParams... jobParams )
     {
     MRJobParams last = null;
@@ -56,19 +70,6 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
 
       last = jobParam;
       }
-    }
-
-  public MRJobParamsGraph()
-    {
-    super( new EdgeFactory<MRJobParams, Integer>()
-    {
-    int count = 0;
-
-    public Integer createEdge( MRJobParams mrJobParams, MRJobParams mrJobParams1 )
-      {
-      return count++;
-      }
-    } );
     }
 
   public Iterator<MRJobParams> getToplogicalIterator()
@@ -132,5 +133,10 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
       }
 
     return Printer.join( list.toArray(), "\t" );
+    }
+
+  public List<MRJobParams> getPredecessors( MRJobParams param )
+    {
+    return Graphs.predecessorListOf( this, param );
     }
   }

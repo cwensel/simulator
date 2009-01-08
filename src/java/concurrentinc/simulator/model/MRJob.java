@@ -21,11 +21,15 @@
 
 package concurrentinc.simulator.model;
 
+import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.Channel;
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Kronos;
 import concurrentinc.simulator.params.MRJobParams;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,10 +43,11 @@ public class MRJob
   private Cluster cluster;
   private DistributedData inputData;
   private MRJobParams mrJobParams;
+  private Channel channel;
 
-  public MRJob( DistributedData inputData, MRJobParams mrJobParams )
+  public MRJob( Cluster cluster, MRJobParams mrJobParams )
     {
-    this.inputData = inputData;
+    this.cluster = cluster;
     this.mrJobParams = mrJobParams;
     }
 
@@ -91,20 +96,44 @@ public class MRJob
     return mrJobParams.reducer.numProcesses;
     }
 
-  public DistributedData getInputData()
+  DistributedData getInputData()
     {
     return inputData;
     }
 
-  public void startJob( Cluster cluster )
+  public void startJob( DistributedData inputData )
     {
-    this.cluster = cluster;
+    this.inputData = inputData;
     startMaps();
+    }
+
+  public void startJob( List<MRJob> predecessors )
+    {
+    for( MRJob predecessor : predecessors )
+      predecessor.blockTillComplete();
+
+    int outputSizeMb = 0;
+
+    for( MRJob predecessor : predecessors )
+      outputSizeMb += predecessor.getOutputSizeMb();
+
+    inputData = new DistributedData( outputSizeMb );
+    startMaps();
+    }
+
+  @Blocking
+  public void blockTillComplete()
+    {
+    channel = Kronos.createChannel();
+    channel.take();
     }
 
   public void endJob()
     {
     cluster.endJob( this );
+
+    if( channel != null )
+      channel.put( "done" );
     }
 
   public void startMaps()
@@ -178,4 +207,5 @@ public class MRJob
     if( reduces.isEmpty() )
       endJob();
     }
+
   }

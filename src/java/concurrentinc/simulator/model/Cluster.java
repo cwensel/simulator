@@ -82,9 +82,9 @@ public class Cluster
     this.maxReduceProcesses = maxReduceProcesses;
     }
 
-  public void submitJob( MRJob job ) throws InterruptedException, ExecutionException
+  public void submitJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException
     {
-    job.startJob( this );
+    job.startJob( distributedData );
     }
 
 
