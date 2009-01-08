@@ -21,12 +21,12 @@
 
 package concurrentinc.simulator.params;
 
-import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.util.PrintableImpl;
 
 /**
  *
  */
-public class MRJobParams extends Printable
+public class MRJobParams extends PrintableImpl
   {
   public MapperParams mapper;
   public ReducerParams reducer;

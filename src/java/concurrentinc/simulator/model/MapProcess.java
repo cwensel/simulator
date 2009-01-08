@@ -29,10 +29,10 @@ import com.hellblazer.primeMover.Entity;
 @Entity
 public class MapProcess
   {
-  Job job;
+  MRJob job;
   Mapper mapper;
 
-  public MapProcess( Job job, Mapper mapper )
+  public MapProcess( MRJob job, Mapper mapper )
     {
     this.job = job;
     this.mapper = mapper;

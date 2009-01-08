@@ -42,23 +42,22 @@ public class SimpleRunner
 
     ClusterParams clusterParams = new ClusterParams( 100, 100 );
 
-    for( int inputSizeMb = start.inputSizeMb; inputSizeMb <= end.inputSizeMb; inputSizeMb += increment.inputSizeMb )
+    for( int inputSizeMb = start.getInputSizeMB(); inputSizeMb <= end.getInputSizeMB(); inputSizeMb += increment.getInputSizeMB() )
       {
-      for( float mapperDataFactor = start.mrParams.mapper.dataFactor; mapperDataFactor <= end.mrParams.mapper.dataFactor; mapperDataFactor += increment.mrParams.mapper.dataFactor )
+      for( float mapperDataFactor = start.getMapperParams().dataFactor; mapperDataFactor <= end.getMapperParams().dataFactor; mapperDataFactor += increment.getMapperParams().dataFactor )
         {
-        for( float reducerDataFactor = start.mrParams.reducer.dataFactor; reducerDataFactor <= end.mrParams.reducer.dataFactor; reducerDataFactor += increment.mrParams.reducer.dataFactor )
+        for( float reducerDataFactor = start.getReducerParams().dataFactor; reducerDataFactor <= end.getReducerParams().dataFactor; reducerDataFactor += increment.getReducerParams().dataFactor )
           {
-          for( int numMappers = start.mrParams.mapper.numProcesses; numMappers <= end.mrParams.mapper.numProcesses; numMappers += increment.mrParams.mapper.numProcesses )
+          for( int numMappers = start.getMapperParams().numProcesses; numMappers <= end.getMapperParams().numProcesses; numMappers += increment.getMapperParams().numProcesses )
             {
-            for( int numReducers = start.mrParams.reducer.numProcesses; numReducers <= end.mrParams.reducer.numProcesses; numReducers += increment.mrParams.reducer.numProcesses )
+            for( int numReducers = start.getReducerParams().numProcesses; numReducers <= end.getReducerParams().numProcesses; numReducers += increment.getReducerParams().numProcesses )
               {
               if( !first && sample != 1.0 && random.nextFloat() > sample )
                 continue;
 
-              MRJobParams mrParams = new MRJobParams( numMappers, numReducers );
-              JobParams params = new JobParams( inputSizeMb, mrParams );
+              JobParams jobParams = new JobParams( inputSizeMb, new MRJobParams( numMappers, numReducers ) );
 
-              JobRun run = new JobRun( params );
+              JobRun run = new JobRun( jobParams );
 
               run.run( clusterParams );
 

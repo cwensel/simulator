@@ -22,7 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
-import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.MRJobParams;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,11 +32,11 @@ import java.util.Set;
  *
  */
 @Entity
-public class Job
+public class MRJob
   {
-  long inputSizeMb; // the input to mappers
-  long shuffleSizeMb; // the output of mappers into shuffle, same as input to reducers
-  long outputSizeMb; // the output of reducers
+  int inputSizeMb; // the input to mappers
+  int shuffleSizeMb; // the output of mappers into shuffle, same as input to reducers
+  int outputSizeMb; // the output of reducers
 
   int numMappers;
   int numReducers;
@@ -55,16 +55,23 @@ public class Job
   private Set<ReduceProcess> reduces;
   private Cluster cluster;
 
-  public Job( JobParams params )
+  public MRJob( DistributedData inputData, MRJobParams params )
     {
-    this.inputSizeMb = params.inputSizeMb;
-    this.shuffleSizeMb = (long) ( params.mrParams.mapper.dataFactor * this.inputSizeMb );
-    this.outputSizeMb = (long) ( params.mrParams.reducer.dataFactor * this.shuffleSizeMb );
-    this.numMappers = params.mrParams.mapper.numProcesses;
-    this.numReducers = params.mrParams.reducer.numProcesses;
-    this.networkBandwidth = params.networkBandwidth;
-    this.blockSizeMb = params.blockSizeMb;
-    this.fileReplication = params.fileReplication;
+    this.inputSizeMb = inputData.sizeMb;
+    this.networkBandwidth = inputData.networkBandwidth;
+    this.blockSizeMb = inputData.blockSizeMb;
+    this.fileReplication = inputData.fileReplication;
+
+    this.shuffleSizeMb = (int) ( params.mapper.dataFactor * this.inputSizeMb );
+    this.outputSizeMb = (int) ( params.reducer.dataFactor * this.shuffleSizeMb );
+
+    this.numMappers = params.mapper.numProcesses;
+    this.numReducers = params.reducer.numProcesses;
+
+    this.mapProcessingFactor = params.mapper.processingBandwidth;
+    this.reduceProcessingFactor = params.reducer.processingBandwidth;
+
+    this.sortBlockSizeMb = params.reducer.sortBlockSizeMb;
     }
 
   int getNumMappers()
@@ -107,8 +114,8 @@ public class Job
     {
     maps = new HashSet<MapProcess>();
 
-    long size = inputSizeMb;
-    long subBlockSize = (long) Math.floor( inputSizeMb / getNumMappers() );
+    int size = inputSizeMb;
+    int subBlockSize = (int) Math.floor( inputSizeMb / getNumMappers() );
 
     DistributedData data = new DistributedData( networkBandwidth, inputSizeMb, blockSizeMb, fileReplication );
 

@@ -19,28 +19,20 @@
  * along with Cascading.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package concurrentinc.simulator.params;
-
-import concurrentinc.simulator.util.PrintableImpl;
+package concurrentinc.simulator.util;
 
 /**
  *
  */
-public class MapperParams extends PrintableImpl
+public class PrintableImpl implements Printable
   {
-  public int numProcesses = 1; // requested num processes
-  public float processingBandwidth = 100; // Mb /sec processing bandwidth
-  public float dataFactor = 1.0f; // does it create or destroy data
-
-  public MapperParams( int numProcesses )
+  public String printFields()
     {
-    this.numProcesses = numProcesses;
+    return Printer.printFields( getClass() );
     }
 
-  public MapperParams( int numProcesses, float dataFactor, float processingBandwidth )
+  public String print()
     {
-    this.numProcesses = numProcesses;
-    this.processingBandwidth = processingBandwidth;
-    this.dataFactor = dataFactor;
+    return Printer.print( this );
     }
   }

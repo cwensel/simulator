@@ -29,11 +29,11 @@ import com.hellblazer.primeMover.Entity;
 @Entity
 public class ReduceProcess
   {
-  Job job;
+  MRJob job;
   Shuffler shuffler;
   Reducer reducer;
 
-  public ReduceProcess( Job job, Shuffler shuffler, Reducer reducer )
+  public ReduceProcess( MRJob job, Shuffler shuffler, Reducer reducer )
     {
     this.job = job;
     this.shuffler = shuffler;

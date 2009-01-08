@@ -24,15 +24,9 @@ package concurrentinc.simulator.util;
 /**
  *
  */
-public class Printable
+public interface Printable
   {
-  public String printFields()
-    {
-    return Printer.printFields( getClass() );
-    }
+  String printFields();
 
-  public String print()
-    {
-    return Printer.print( this );
-    }
+  String print();
   }

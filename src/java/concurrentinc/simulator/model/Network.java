@@ -26,4 +26,14 @@ package concurrentinc.simulator.model;
  */
 public class Network
   {
+  int bandwidth = 10 * 1024; // Mb / sec;;
+
+  public Network()
+    {
+    }
+
+  public Network( int bandwidth )
+    {
+    this.bandwidth = bandwidth;
+    }
   }

@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class Printer
   {
-  public static String print( Printable printable )
+  public static String print( PrintableImpl printable )
     {
     if( printable == null )
       return "";
@@ -48,7 +48,7 @@ public class Printer
         Object value = field.get( printable );
 
         if( Printable.class.isAssignableFrom( field.getType() ) )
-          all.add( print( (Printable) value ) );
+          all.add( print( (PrintableImpl) value ) );
         else
           all.add( value == null ? "" : value );
         }
@@ -63,14 +63,21 @@ public class Printer
 
   public static String printFields( Class printable )
     {
-    ArrayList all = new ArrayList();
+    List list = createSimpleFields( printable );
 
-    printFields( null, printable, all );
-
-    return join( simplify( all ).toArray(), "\t" );
+    return join( list.toArray(), "\t" );
     }
 
-  static void printFields( String prefix, Class printable, List all )
+  public static List<String> createSimpleFields( Class printable )
+    {
+    ArrayList all = new ArrayList();
+
+    createFields( null, printable, all );
+
+    return simplify( all );
+    }
+
+  public static void createFields( String prefix, Class printable, List all )
     {
     Field[] fields = printable.getFields();
 
@@ -79,7 +86,7 @@ public class Printer
       String path = join( ".", prefix, field.getName() );
 
       if( Printable.class.isAssignableFrom( field.getType() ) )
-        printFields( path, field.getType(), all );
+        createFields( path, field.getType(), all );
       else
         all.add( path );
       }

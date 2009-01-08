@@ -21,12 +21,12 @@
 
 package concurrentinc.simulator.params;
 
-import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.util.PrintableImpl;
 
 /**
  *
  */
-public class ClusterParams extends Printable
+public class ClusterParams extends PrintableImpl
   {
   public int maxMapProcesses;
   public int maxReduceProcesses;

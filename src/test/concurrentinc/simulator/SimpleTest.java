@@ -25,7 +25,8 @@ import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.test.SimulationTests;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
-import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.model.MRJob;
+import concurrentinc.simulator.model.Network;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.params.MRJobParams;
 import org.joda.time.Instant;
@@ -47,11 +48,11 @@ public class SimpleTest extends SimulationTests
     Thread.currentThread().setContextClassLoader( getClassLoader() );
     controller.setCurrentTime( new Instant() );
 
-    MRJobParams mrParams = new MRJobParams( 100, 100 );
-    JobParams params = new JobParams( TERA, mrParams );
-    Job job = new Job( params );
-//    Job job = new Job( MEGA, MEGA, MEGA, 100, 1 );
-    Cluster cluster = new Cluster( 100, 100 );
+    JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ) );
+    MRJob job = new MRJob( params.distributedData, params.getMRParams() );
+
+    Network network = new Network();
+    Cluster cluster = new Cluster( network, 100, 100 );
 
     Instant startTime = controller.getCurrentTime();
     System.out.println( "start: " + startTime );

@@ -22,6 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
+import concurrentinc.simulator.params.ClusterParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,8 @@ import java.util.concurrent.ExecutionException;
 public class Cluster
   {
   private static final Logger LOG = LoggerFactory.getLogger( Cluster.class );
+
+  Network network;
 
   int maxMapProcesses = 100;
   int maxReduceProcesses = 100;
@@ -59,13 +62,33 @@ public class Cluster
     this.maxReduceProcesses = maxReduceProcesses;
     }
 
-  public void submitJob( Job job ) throws InterruptedException, ExecutionException
+  public Cluster( ClusterParams clusterParams )
+    {
+    this.maxMapProcesses = clusterParams.maxMapProcesses;
+    this.maxReduceProcesses = clusterParams.maxReduceProcesses;
+    }
+
+  public Cluster( Network network, ClusterParams clusterParams )
+    {
+    this.network = network;
+    this.maxMapProcesses = clusterParams.maxMapProcesses;
+    this.maxReduceProcesses = clusterParams.maxReduceProcesses;
+    }
+
+  public Cluster( Network network, int maxMapProcesses, int maxReduceProcesses )
+    {
+    this.network = network;
+    this.maxMapProcesses = maxMapProcesses;
+    this.maxReduceProcesses = maxReduceProcesses;
+    }
+
+  public void submitJob( MRJob job ) throws InterruptedException, ExecutionException
     {
     job.startJob( this );
     }
 
 
-  public void endJob( Job job )
+  public void endJob( MRJob job )
     {
 
     }

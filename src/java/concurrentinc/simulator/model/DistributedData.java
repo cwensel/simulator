@@ -32,12 +32,24 @@ public class DistributedData
   {
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
-  float networkBandwidth;
-  long sizeMb;
-  long blockSizeMb;
-  int fileReplication;
+  public int sizeMb;
+  public float networkBandwidth = 10 * 1024;  // should be delegated to network object
+  public int blockSizeMb = 128;
+  public int fileReplication = 3;
 
   long readCounter;
+
+  public DistributedData( int sizeMb )
+    {
+    this.sizeMb = sizeMb;
+    }
+
+  public DistributedData( int sizeMb, int blockSizeMb, int fileReplication )
+    {
+    this.sizeMb = sizeMb;
+    this.blockSizeMb = blockSizeMb;
+    this.fileReplication = fileReplication;
+    }
 
   public DistributedData( float networkBandwidth, int fileReplication )
     {
@@ -45,7 +57,7 @@ public class DistributedData
     this.fileReplication = fileReplication;
     }
 
-  public DistributedData( float networkBandwidth, long sizeMb, long blockSizeMb, int fileReplication )
+  public DistributedData( float networkBandwidth, int sizeMb, int blockSizeMb, int fileReplication )
     {
     this.networkBandwidth = networkBandwidth;
     this.sizeMb = sizeMb;

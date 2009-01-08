@@ -21,31 +21,65 @@
 
 package concurrentinc.simulator.params;
 
-import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.model.DistributedData;
+import concurrentinc.simulator.util.PrintableImpl;
+
+import java.util.List;
 
 /**
  *
  */
-public class JobParams extends Printable
+public class JobParams extends PrintableImpl
   {
-  public int inputSizeMb;
-  public MRJobParams mrParams;
-  public float networkBandwidth = 10 * 1024; // Mb / sec;
-  public int blockSizeMb = 128;
-  public int fileReplication = 3;
+  public DistributedData distributedData;
+  public MRJobParamsGraph mrParams;
 
   public JobParams( int inputSizeMb, MRJobParams mrParams )
     {
-    this.inputSizeMb = inputSizeMb;
+    this.distributedData = new DistributedData( inputSizeMb );
+    this.mrParams = new MRJobParamsGraph( mrParams );
+    }
+
+  public JobParams( int inputSizeMb, MRJobParamsGraph mrParams )
+    {
+    this.distributedData = new DistributedData( inputSizeMb );
     this.mrParams = mrParams;
     }
 
-  public JobParams( int inputSizeMb, MRJobParams mrParams, float networkBandwidth, int blockSizeMb, int fileReplication )
+  public JobParams( int inputSizeMb, MRJobParamsGraph mrParams, int blockSizeMb, int fileReplication )
     {
-    this.inputSizeMb = inputSizeMb;
+    this.distributedData = new DistributedData( inputSizeMb, blockSizeMb, fileReplication );
     this.mrParams = mrParams;
-    this.networkBandwidth = networkBandwidth;
-    this.blockSizeMb = blockSizeMb;
-    this.fileReplication = fileReplication;
+    }
+
+  public JobParams( DistributedData distributedData, MRJobParamsGraph mrParams )
+    {
+    this.distributedData = distributedData;
+    this.mrParams = mrParams;
+    }
+
+  public MRJobParams getMRParams()
+    {
+    List<MRJobParams> origins = mrParams.getOrigins();
+
+    if( origins.size() != 1 )
+      throw new IllegalStateException( "too many origins, found: " + origins.size() );
+
+    return origins.get( 0 );
+    }
+
+  public int getInputSizeMB()
+    {
+    return distributedData.sizeMb;
+    }
+
+  public MapperParams getMapperParams()
+    {
+    return getMRParams().mapper;
+    }
+
+  public ReducerParams getReducerParams()
+    {
+    return getMRParams().reducer;
     }
   }

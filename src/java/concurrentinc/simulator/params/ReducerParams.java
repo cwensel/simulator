@@ -21,16 +21,18 @@
 
 package concurrentinc.simulator.params;
 
-import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.util.PrintableImpl;
 
 /**
  *
  */
-public class ReducerParams extends Printable
+public class ReducerParams extends PrintableImpl
   {
   public int numProcesses = 1; // requested num processes
   public float processingBandwidth = 100; // Mb /sec processing bandwidth
   public float dataFactor = 1.0f; // does it create or destroy data
+  public long sortBlockSizeMb = 100;
+
 
   public ReducerParams( int numProcesses )
     {
@@ -44,4 +46,11 @@ public class ReducerParams extends Printable
     this.dataFactor = dataFactor;
     }
 
+  public ReducerParams( int numProcesses, float processingBandwidth, float dataFactor, long sortBlockSizeMb )
+    {
+    this.numProcesses = numProcesses;
+    this.processingBandwidth = processingBandwidth;
+    this.dataFactor = dataFactor;
+    this.sortBlockSizeMb = sortBlockSizeMb;
+    }
   }

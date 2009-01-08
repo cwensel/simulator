@@ -25,10 +25,11 @@ import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
 import concurrentinc.simulator.model.Cluster;
-import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.model.MRJob;
+import concurrentinc.simulator.model.Network;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.JobParams;
-import concurrentinc.simulator.util.Printable;
+import concurrentinc.simulator.util.PrintableImpl;
 import concurrentinc.simulator.util.Printer;
 import org.joda.time.Instant;
 import org.joda.time.Period;
@@ -42,7 +43,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class JobRun
   {
-  public class RunResults extends Printable
+  public class RunResults extends PrintableImpl
     {
     public Instant startTime;
     public Instant endTime;
@@ -106,9 +107,10 @@ public class JobRun
 
     Framework.setController( controller );
 
-    Cluster cluster = new Cluster( clusterParams.maxMapProcesses, clusterParams.maxReduceProcesses );
+    Network network = new Network();
+    Cluster cluster = new Cluster( network, clusterParams );
 
-    Job job = new Job( params );
+    MRJob job = new MRJob( params.distributedData, params.getMRParams() );
 
     setStartTime( controller.getCurrentTime() );
 
