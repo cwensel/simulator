@@ -23,12 +23,10 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.test.SimulationTests;
 import com.hellblazer.primeMover.runtime.Framework;
-import concurrentinc.simulator.params.ClusterParams;
-import concurrentinc.simulator.params.JobParams;
-import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.NetworkParams;
-import concurrentinc.simulator.model.Network;
 import concurrentinc.simulator.model.DistributedData;
+import concurrentinc.simulator.model.NetworkImpl;
+import concurrentinc.simulator.model.Network;
 import concurrentinc.simulator.controller.SimController;
 import org.joda.time.Instant;
 import org.joda.time.Period;
@@ -50,7 +48,7 @@ public class NetworkTest extends SimulationTests
     Framework.setController( controller );
 
     NetworkParams networkParams = new NetworkParams( );
-    Network network = new Network( networkParams );
+    Network network = new NetworkImpl( networkParams );
     DistributedData distributedData = new DistributedData( 1024 );
 
     distributedData.read( network, 1, 1 );

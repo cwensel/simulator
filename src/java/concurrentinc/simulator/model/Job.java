@@ -67,13 +67,13 @@ public class Job extends SimpleDirectedGraph<MRJob, Integer>
 
   private void populate( MRJobParamsGraph mrParams )
     {
-    Map<MRJobParams, MRJob> map = new HashMap<MRJobParams, MRJob>();
+    Map<MRJobParams, MRJobImpl> map = new HashMap<MRJobParams, MRJobImpl>();
     Iterator<MRJobParams> paramsIterator = mrParams.getToplogicalIterator();
 
     while( paramsIterator.hasNext() )
       {
       MRJobParams params = paramsIterator.next();
-      MRJob mrJob = new MRJob( cluster, params );
+      MRJobImpl mrJob = new MRJobImpl( cluster, params );
 
       map.put( params, mrJob );
 

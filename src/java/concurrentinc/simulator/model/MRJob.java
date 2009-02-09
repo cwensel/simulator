@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -22,214 +22,30 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Blocking;
-import com.hellblazer.primeMover.Channel;
-import com.hellblazer.primeMover.Entity;
-import com.hellblazer.primeMover.Kronos;
-import concurrentinc.simulator.params.MRJobParams;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
  */
-@Entity({MRJob.class})
-public class MRJob
+public interface MRJob
   {
-  private Set<MapProcess> mapProcesses;
-  private Set<ReduceProcess> reduceProcesses;
-  private Cluster cluster;
-  private DistributedData inputData;
-  private MRJobParams mrJobParams;
-  private Channel channel;
-  private int runningMapProcesses;
-  private int runningReduceProcesses;
+  void startJob( DistributedData inputData );
 
-  public MRJob( Cluster cluster, MRJobParams mrJobParams )
-    {
-    this.cluster = cluster;
-    this.mrJobParams = mrJobParams;
-    }
-
-  private int getBlockSizeMb()
-    {
-    return inputData.blockSizeMb;
-    }
-
-  private int getFileReplication()
-    {
-    return inputData.fileReplication;
-    }
-
-  private int getOutputSizeMb()
-    {
-    return (int) ( mrJobParams.reducer.dataFactor * getShuffleSizeMb() );
-    }
-
-  private int getShuffleSizeMb()
-    {
-    return (int) ( mrJobParams.mapper.dataFactor * getInputSizeMB() );
-    }
-
-  private int getInputSizeMB()
-    {
-    return inputData.sizeMb;
-    }
-
-  int getNumMappers()
-    {
-    int mod = getInputSizeMB() % getMinNumMappers();
-    return Math.max( getMinNumMappers() + (mod == 0 ? 0 : 1), getNumBlocks() );
-    }
-
-  int getNumBlocks()
-    {
-    return (int) Math.ceil( getInputSizeMB() / getBlockSizeMb() );
-    }
-
-  int computeSplitSizeMb()
-    {
-    int goalSize = getInputSizeMB() / getMinNumMappers();
-    return Math.max( 1, Math.min( goalSize, getBlockSizeMb() ) );
-    }
-
-  int getMinNumMappers()
-    {
-    return mrJobParams.mapper.numProcesses;
-    }
-
-  int getNumReducers()
-    {
-    return mrJobParams.reducer.numProcesses;
-    }
-
-  DistributedData getInputData()
-    {
-    return inputData;
-    }
-
-  public void startJob( DistributedData inputData )
-    {
-    this.inputData = inputData;
-    startMaps();
-    }
-
-  public void startJob( List<MRJob> predecessors )
-    {
-    for( MRJob predecessor : predecessors )
-      predecessor.blockTillComplete();
-
-    int outputSizeMb = 0;
-
-    for( MRJob predecessor : predecessors )
-      outputSizeMb += predecessor.getOutputSizeMb();
-
-    inputData = new DistributedData( outputSizeMb );
-    startMaps();
-    }
+  void startJob( List<MRJob> predecessors );
 
   @Blocking
-  public void blockTillComplete()
-    {
-    channel = Kronos.createChannel();
-    channel.take();
-    }
+  void blockTillComplete();
 
-  public void endJob()
-    {
-    cluster.endJob( this );
+  void endJob();
 
-    if( channel != null )
-      channel.put( "done" );
-    }
+  void releaseMapProcess( MapProcess mapProcess );
 
-  private void startMaps()
-    {
-    cluster.executeMaps( getMapProcesses() );
-    }
-
-  private void startReduces()
-    {
-    cluster.executeReduces( getReduceProcesses() );
-    }
-
-  private Collection<MapProcess> getMapProcesses()
-    {
-    mapProcesses = new HashSet<MapProcess>();
-
-    DistributedData data = new DistributedData( getInputSizeMB(), getBlockSizeMb(), getFileReplication() );
-
-    int remainingSize = getInputSizeMB();
-    int splitSize = computeSplitSizeMb();
-
-    for( int i = 0; i < getNumMappers(); i++ )
-      {
-      long toProcess = Math.min( splitSize, remainingSize );
-      Mapper mapper = new Mapper( data, mrJobParams.mapper.processingBandwidth, toProcess );
-      mapProcesses.add( new MapProcess( this, mapper ) );
-
-      remainingSize -= toProcess;
-      }
-
-    return mapProcesses;
-    }
-
-  private Collection<ReduceProcess> getReduceProcesses()
-    {
-    reduceProcesses = new HashSet<ReduceProcess>();
-
-    long toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
-    long toWrite = getOutputSizeMb() / getNumReducers();
-
-    DistributedData data = new DistributedData( getFileReplication() );
-
-    for( int i = 0; i < getNumReducers(); i++ )
-      {
-      Shuffler shuffler = new Shuffler( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
-      Reducer reducer = new Reducer( data, mrJobParams.reducer.processingBandwidth, toProcess, toWrite );
-      reduceProcesses.add( new ReduceProcess( this, shuffler, reducer ) );
-      }
-
-    return reduceProcesses;
-    }
-
-  public void releaseMapProcess( MapProcess mapProcess )
-    {
-    if( !mapProcesses.remove( mapProcess ) )
-      throw new IllegalStateException( "map process not queued, current running: " + runningMapProcesses );
-
-    runningMapProcesses--;
-
-    cluster.releaseMapProcess();
-
-    if( mapProcesses.isEmpty() )
-      startReduces();
-    }
-
-  public void releaseReduceProcess( ReduceProcess reduceProcess )
-    {
-    if( !reduceProcesses.remove( reduceProcess ) )
-      throw new IllegalStateException( "reduce process not queued, current running: " + runningReduceProcesses );
-
-    runningReduceProcesses--;
-
-    cluster.releaseReduceProcess();
-
-    if( reduceProcesses.isEmpty() )
-      endJob();
-    }
+  void releaseReduceProcess( ReduceProcess reduceProcess );
 
   @Blocking
-  public int runningMapProcess()
-    {
-    return runningMapProcesses++;
-    }
+  int runningMapProcess();
 
   @Blocking
-  public int runningReduceProcess()
-    {
-    return runningReduceProcesses++;
-    }
+  int runningReduceProcess();
   }

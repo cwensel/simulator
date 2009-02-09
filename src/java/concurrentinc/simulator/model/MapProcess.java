@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -21,27 +21,10 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Entity;
-
 /**
  *
  */
-@Entity({MapProcess.class})
-public class MapProcess
+public interface MapProcess
   {
-  MRJob job;
-  Mapper mapper;
-
-  public MapProcess( MRJob job, Mapper mapper )
-    {
-    this.job = job;
-    this.mapper = mapper;
-    }
-
-  public void execute( Network network )
-    {
-    mapper.execute( network, job.runningMapProcess() );
-
-    job.releaseMapProcess( this );
-    }
+  void execute( Network network );
   }

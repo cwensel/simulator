@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -21,10 +21,33 @@
 
 package concurrentinc.simulator.model;
 
+import com.hellblazer.primeMover.Entity;
+
 /**
  *
  */
-public interface ReduceProcess
+@Entity({ReduceProcess.class})
+public class ReduceProcessImpl implements ReduceProcess
   {
-  void execute( Network network );
+  private MRJob job;
+  private Shuffler shuffler;
+  private Reducer reducer;
+
+  public ReduceProcessImpl( MRJob job, Shuffler shuffler, Reducer reducer )
+    {
+    this.job = job;
+    this.shuffler = shuffler;
+    this.reducer = reducer;
+    }
+
+  public void execute( Network network )
+    {
+    job.runningReduceProcess();
+
+    shuffler.execute( network );
+    reducer.execute( network );
+
+    job.releaseReduceProcess( this );
+    }
+
   }
