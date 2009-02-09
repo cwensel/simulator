@@ -115,8 +115,8 @@ public class JobSimulationRunner
 
     controller.eventLoop();
 
-    setStartTime( controller.getStartTime() );
-    setEndTime( controller.getEndTime() );
+    setStartTime( controller.getSimulationStart() );
+    setEndTime( controller.getSimulationEnd() );
     }
 
   public String print()

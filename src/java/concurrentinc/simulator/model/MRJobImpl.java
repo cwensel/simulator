@@ -167,7 +167,7 @@ public class MRJobImpl implements MRJob
     for( int i = 0; i < getNumMappers(); i++ )
       {
       long toProcess = Math.min( splitSize, remainingSize );
-      Mapper mapper = new Mapper( data, mrJobParams.mapper.processingBandwidth, toProcess );
+      Mapper mapper = new MapperImpl( data, mrJobParams.mapper.processingBandwidth, toProcess );
       mapProcesses.add( new MapProcessImpl( this, mapper ) );
 
       remainingSize -= toProcess;
@@ -187,8 +187,8 @@ public class MRJobImpl implements MRJob
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
-      Shuffler shuffler = new Shuffler( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
-      Reducer reducer = new Reducer( data, mrJobParams.reducer.processingBandwidth, toProcess, toWrite );
+      Shuffler shuffler = new ShufflerImpl( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
+      Reducer reducer = new ReducerImpl( data, mrJobParams.reducer.processingBandwidth, toProcess, toWrite );
       reduceProcesses.add( new ReduceProcessImpl( this, shuffler, reducer ) );
       }
 

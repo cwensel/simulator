@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -21,43 +21,13 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Kronos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
-public class Shuffler
+public interface Shuffler
   {
-  private static final Logger LOG = LoggerFactory.getLogger( Shuffler.class );
-
-  private float sortFactor = 1024; // Mb / sec
-  long sortBlockSizeMb;
-  int numMappers;
-  long sizeMb;
-
-  public Shuffler( long sortBlockSizeMb, int numMappers, long sizeMb )
-    {
-    this.sortBlockSizeMb = sortBlockSizeMb;
-    this.numMappers = numMappers;
-    this.sizeMb = sizeMb;
-    }
-
-  public void execute( Network network )
-    {
-    // fetch
-    // should fetch through network object
-    network.read( sizeMb );
-
-    // sort
-    // assumes O(n log n)
-    double bigO = sizeMb * Math.log10( sizeMb );
-    double sortSleep = bigO / sortFactor * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "bigO = " + bigO + " sortSleep = " + sortSleep );
-
-    Kronos.sleep( (long) sortSleep );
-    }
+  @Blocking
+  void execute( Network network );
   }

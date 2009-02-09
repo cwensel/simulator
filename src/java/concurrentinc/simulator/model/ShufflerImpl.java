@@ -21,35 +21,47 @@
 
 package concurrentinc.simulator.model;
 
+import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
-@Entity({ReduceProcess.class})
-public class ReduceProcessImpl implements ReduceProcess
+@Entity({Shuffler.class})
+public class ShufflerImpl implements Shuffler
   {
-  private MRJob job;
-  private Shuffler shuffler;
-  private Reducer reducer;
+  private static final Logger LOG = LoggerFactory.getLogger( ShufflerImpl.class );
 
-  public ReduceProcessImpl( MRJob job, Shuffler shuffler, Reducer reducer )
+  private float sortFactor = 1024; // Mb / sec
+  private long sortBlockSizeMb;
+  private int numMappers;
+  private long sizeMb;
+
+  public ShufflerImpl( long sortBlockSizeMb, int numMappers, long sizeMb )
     {
-    this.job = job;
-    this.shuffler = shuffler;
-    this.reducer = reducer;
+    this.sortBlockSizeMb = sortBlockSizeMb;
+    this.numMappers = numMappers;
+    this.sizeMb = sizeMb;
     }
 
-  static int count = 0;
-
+  @Blocking
   public void execute( Network network )
     {
-    job.runningReduceProcess();
+    // fetch
+    // should fetch through network object
+    network.read( sizeMb );
 
-    shuffler.execute( network );
-    reducer.execute( network );
+    // sort
+    // assumes O(n log n)
+    double bigO = sizeMb * Math.log10( sizeMb );
+    double sortSleep = bigO / sortFactor * 1000;
 
-    job.releaseReduceProcess( this );
+    if( LOG.isDebugEnabled() )
+      LOG.debug( "bigO = " + bigO + " sortSleep = " + sortSleep );
+
+    Kronos.sleep( (long) sortSleep );
     }
-
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -21,48 +21,13 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Kronos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
-public class Reducer
+public interface Reducer
   {
-  private static final Logger LOG = LoggerFactory.getLogger( Reducer.class );
-
-  private DistributedData data;
-  private float processingFactor;
-  private long processSizeMb;
-  private long outputSizeMb;
-
-  public Reducer( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
-    {
-    this.data = data;
-    this.processingFactor = processingFactor;
-    this.processSizeMb = processSizeMb;
-    this.outputSizeMb = outputSizeMb;
-    }
-
-  public void execute( Network network )
-    {
-    blockProcessing();
-    blockWriting( network );
-    }
-
-  private void blockWriting( Network network )
-    {
-    data.write( network, outputSizeMb );
-    }
-
-  private void blockProcessing()
-    {
-    float reducerSleep = processSizeMb / processingFactor * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "reducerSleep = " + reducerSleep );
-
-    Kronos.sleep( (long) reducerSleep );
-    }
+  @Blocking
+  void execute( Network network );
   }

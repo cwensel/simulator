@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.cascading.org/
  *
@@ -21,46 +21,13 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Kronos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hellblazer.primeMover.Blocking;
 
 /**
  *
  */
-public class Mapper
+public interface Mapper
   {
-  private static final Logger LOG = LoggerFactory.getLogger( Mapper.class );
-
-  DistributedData data;
-  float processingFactor;
-  long allocatedSizeMb;
-
-  public Mapper( DistributedData data, float processingFactor, long allocatedSizeMb )
-    {
-    this.data = data;
-    this.processingFactor = processingFactor;
-    this.allocatedSizeMb = allocatedSizeMb;
-    }
-
-  public void execute( Network network, int runningMapProcesses )
-    {
-    blockReadingData( network, runningMapProcesses );
-    blockProcessingData();
-    }
-
-  private void blockReadingData( Network network, int runningJobMapProcesses )
-    {
-    data.read( network, allocatedSizeMb, runningJobMapProcesses );
-    }
-
-  private void blockProcessingData()
-    {
-    float mapperSleep = allocatedSizeMb / processingFactor * 1000;
-
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "mapperSleep = " + mapperSleep );
-
-    Kronos.sleep( (long) mapperSleep );
-    }
+  @Blocking
+  void execute( Network network, int runningMapProcesses );
   }
