@@ -21,8 +21,8 @@
 
 package concurrentinc.simulator.model;
 
-import java.util.concurrent.ExecutionException;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -42,4 +42,6 @@ public interface Cluster
   void releaseReduceProcess();
 
   void startReduce();
+
+  void submitWorkLoadJob( WorkLoadJob workLoadJob );
   }

@@ -24,9 +24,10 @@ package concurrentinc.simulator;
 import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
-import concurrentinc.simulator.model.Job;
+import concurrentinc.simulator.model.WorkLoadJob;
 import concurrentinc.simulator.model.ClusterImpl;
 import concurrentinc.simulator.model.Cluster;
+import concurrentinc.simulator.model.WorkLoadJobImpl;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.util.PrintableImpl;
@@ -108,10 +109,9 @@ public class JobSimulationRunner
     Framework.setController( controller );
 
     Cluster cluster = new ClusterImpl( clusterParams );
+    WorkLoadJob workLoadJob = new WorkLoadJobImpl( params );
 
-    Job job = new Job( cluster, params );
-
-    job.start();
+    cluster.submitWorkLoadJob( workLoadJob );
 
     controller.eventLoop();
 

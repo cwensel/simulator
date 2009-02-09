@@ -21,10 +21,10 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.Channel;
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.Blocking;
 import concurrentinc.simulator.params.MRJobParams;
 
 import java.util.Collection;
@@ -47,9 +47,8 @@ public class MRJobImpl implements MRJob
   private int runningMapProcesses;
   private int runningReduceProcesses;
 
-  public MRJobImpl( Cluster cluster, MRJobParams mrJobParams )
+  public MRJobImpl( MRJobParams mrJobParams )
     {
-    this.cluster = cluster;
     this.mrJobParams = mrJobParams;
     }
 
@@ -110,14 +109,17 @@ public class MRJobImpl implements MRJob
     return inputData;
     }
 
-  public void startJob( DistributedData inputData )
+  public void startJob( Cluster cluster, DistributedData inputData )
     {
+    this.cluster = cluster;
     this.inputData = inputData;
     startMaps();
     }
 
-  public void startJob( List<MRJob> predecessors )
+  public void startJob( Cluster cluster, List<MRJob> predecessors )
     {
+    this.cluster = cluster;
+
     for( MRJob predecessor : predecessors )
       predecessor.blockTillComplete();
 

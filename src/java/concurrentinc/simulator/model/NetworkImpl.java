@@ -21,8 +21,8 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.Blocking;
 import concurrentinc.simulator.params.NetworkParams;
 import org.slf4j.Logger;

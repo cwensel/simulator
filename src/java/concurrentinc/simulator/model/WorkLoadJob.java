@@ -21,31 +21,10 @@
 
 package concurrentinc.simulator.model;
 
-import com.hellblazer.primeMover.Blocking;
-
-import java.util.List;
-
 /**
  *
  */
-public interface MRJob
+public interface WorkLoadJob
   {
-  void startJob( Cluster cluster, DistributedData inputData );
-
-  void startJob( Cluster cluster, List<MRJob> predecessors );
-
-  @Blocking
-  void blockTillComplete();
-
-  void endJob();
-
-  void releaseMapProcess( MapProcess mapProcess );
-
-  void releaseReduceProcess( ReduceProcess reduceProcess );
-
-  @Blocking
-  int runningMapProcess();
-
-  @Blocking
-  int runningReduceProcess();
+  void start( Cluster cluster );
   }

@@ -21,6 +21,7 @@
 
 package concurrentinc.simulator.model;
 
+import com.hellblazer.primeMover.Entity;
 import concurrentinc.simulator.params.JobParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.MRJobParamsGraph;
@@ -37,21 +38,20 @@ import java.util.Map;
 /**
  *
  */
-public class Job extends SimpleDirectedGraph<MRJob, Integer>
+@Entity({WorkLoadJob.class})
+public class WorkLoadJobImpl extends SimpleDirectedGraph<MRJob, Integer> implements WorkLoadJob
   {
   private DistributedData distributedData;
-  private Cluster cluster;
 
-  public Job( Cluster cluster, JobParams jobParams )
+  public WorkLoadJobImpl( JobParams jobParams )
     {
     this();
-    this.cluster = cluster;
     this.distributedData = jobParams.distributedData;
 
     populate( jobParams.mrParams );
     }
 
-  private Job()
+  private WorkLoadJobImpl()
     {
     super( new EdgeFactory<MRJob, Integer>()
     {
@@ -73,7 +73,7 @@ public class Job extends SimpleDirectedGraph<MRJob, Integer>
     while( paramsIterator.hasNext() )
       {
       MRJobParams params = paramsIterator.next();
-      MRJobImpl mrJob = new MRJobImpl( cluster, params );
+      MRJobImpl mrJob = new MRJobImpl( params );
 
       map.put( params, mrJob );
 
@@ -103,8 +103,7 @@ public class Job extends SimpleDirectedGraph<MRJob, Integer>
     return new TopologicalOrderIterator<MRJob, Integer>( graph );
     }
 
-
-  public void start()
+  public void start( Cluster cluster )
     {
     Iterator<MRJob> jobsIterator = getToplogicalIterator();
 
@@ -114,9 +113,9 @@ public class Job extends SimpleDirectedGraph<MRJob, Integer>
       List<MRJob> predecessors = Graphs.predecessorListOf( this, mrJob );
 
       if( predecessors.size() != 0 )
-        mrJob.startJob( predecessors );
+        mrJob.startJob( cluster, predecessors );
       else
-        mrJob.startJob( distributedData );
+        mrJob.startJob( cluster, distributedData );
       }
     }
   }

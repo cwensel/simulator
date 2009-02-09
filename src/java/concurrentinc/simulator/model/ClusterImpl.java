@@ -73,9 +73,14 @@ public class ClusterImpl implements Cluster
     this.maxReduceProcesses = maxReduceProcesses;
     }
 
+  public void submitWorkLoadJob( WorkLoadJob workLoadJob )
+    {
+    workLoadJob.start( this );
+    }
+
   public void submitJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException
     {
-    job.startJob( distributedData );
+    job.startJob( this, distributedData );
     }
 
   public void endJob( MRJob job )
