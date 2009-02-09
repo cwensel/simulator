@@ -110,13 +110,12 @@ public class JobSimulationRunner
 
     Job job = new Job( cluster, params );
 
-    setStartTime( controller.getCurrentTime() );
-
     job.start();
 
     controller.eventLoop();
 
-    setEndTime( controller.getCurrentTime() );
+    setStartTime( controller.getStartTime() );
+    setEndTime( controller.getEndTime() );
     }
 
   public String print()

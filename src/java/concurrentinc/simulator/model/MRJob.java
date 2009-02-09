@@ -35,15 +35,17 @@ import java.util.Set;
 /**
  *
  */
-@Entity
+@Entity({MRJob.class})
 public class MRJob
   {
-  private Set<MapProcess> maps;
-  private Set<ReduceProcess> reduces;
+  private Set<MapProcess> mapProcesses;
+  private Set<ReduceProcess> reduceProcesses;
   private Cluster cluster;
   private DistributedData inputData;
   private MRJobParams mrJobParams;
   private Channel channel;
+  private int runningMapProcesses;
+  private int runningReduceProcesses;
 
   public MRJob( Cluster cluster, MRJobParams mrJobParams )
     {
@@ -78,7 +80,19 @@ public class MRJob
 
   int getNumMappers()
     {
-    return Math.max( getMinNumMappers(), (int) Math.ceil( getInputSizeMB() / getBlockSizeMb() ) );
+    int mod = getInputSizeMB() % getMinNumMappers();
+    return Math.max( getMinNumMappers() + (mod == 0 ? 0 : 1), getNumBlocks() );
+    }
+
+  int getNumBlocks()
+    {
+    return (int) Math.ceil( getInputSizeMB() / getBlockSizeMb() );
+    }
+
+  int computeSplitSizeMb()
+    {
+    int goalSize = getInputSizeMB() / getMinNumMappers();
+    return Math.max( 1, Math.min( goalSize, getBlockSizeMb() ) );
     }
 
   int getMinNumMappers()
@@ -143,28 +157,28 @@ public class MRJob
 
   private Collection<MapProcess> getMapProcesses()
     {
-    maps = new HashSet<MapProcess>();
-
-    int size = getInputSizeMB();
-    int subBlockSize = (int) Math.floor( getInputSizeMB() / getNumMappers() );
+    mapProcesses = new HashSet<MapProcess>();
 
     DistributedData data = new DistributedData( getInputSizeMB(), getBlockSizeMb(), getFileReplication() );
 
+    int remainingSize = getInputSizeMB();
+    int splitSize = computeSplitSizeMb();
+
     for( int i = 0; i < getNumMappers(); i++ )
       {
-      long toProcess = Math.min( subBlockSize, size );
+      long toProcess = Math.min( splitSize, remainingSize );
       Mapper mapper = new Mapper( data, mrJobParams.mapper.processingBandwidth, toProcess );
-      maps.add( new MapProcess( this, mapper ) );
+      mapProcesses.add( new MapProcess( this, mapper ) );
 
-      size -= toProcess;
+      remainingSize -= toProcess;
       }
 
-    return maps;
+    return mapProcesses;
     }
 
   private Collection<ReduceProcess> getReduceProcesses()
     {
-    reduces = new HashSet<ReduceProcess>();
+    reduceProcesses = new HashSet<ReduceProcess>();
 
     long toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
     long toWrite = getOutputSizeMb() / getNumReducers();
@@ -175,32 +189,47 @@ public class MRJob
       {
       Shuffler shuffler = new Shuffler( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
       Reducer reducer = new Reducer( data, mrJobParams.reducer.processingBandwidth, toProcess, toWrite );
-      reduces.add( new ReduceProcess( this, shuffler, reducer ) );
+      reduceProcesses.add( new ReduceProcess( this, shuffler, reducer ) );
       }
 
-    return reduces;
+    return reduceProcesses;
     }
 
-  public void releaseMap( MapProcess mapProcess )
+  public void releaseMapProcess( MapProcess mapProcess )
     {
-    if( !maps.remove( mapProcess ) )
-      throw new IllegalStateException( "map process not queued" );
+    if( !mapProcesses.remove( mapProcess ) )
+      throw new IllegalStateException( "map process not queued, current running: " + runningMapProcesses );
 
-    cluster.releaseMap();
+    runningMapProcesses--;
 
-    if( maps.isEmpty() )
+    cluster.releaseMapProcess();
+
+    if( mapProcesses.isEmpty() )
       startReduces();
     }
 
-  public void releaseReduce( ReduceProcess reduceProcess )
+  public void releaseReduceProcess( ReduceProcess reduceProcess )
     {
-    if( !reduces.remove( reduceProcess ) )
-      throw new IllegalStateException( "reduce process not queued" );
+    if( !reduceProcesses.remove( reduceProcess ) )
+      throw new IllegalStateException( "reduce process not queued, current running: " + runningReduceProcesses );
 
-    cluster.releaseReduce();
+    runningReduceProcesses--;
 
-    if( reduces.isEmpty() )
+    cluster.releaseReduceProcess();
+
+    if( reduceProcesses.isEmpty() )
       endJob();
     }
 
+  @Blocking
+  public int runningMapProcess()
+    {
+    return runningMapProcesses++;
+    }
+
+  @Blocking
+  public int runningReduceProcess()
+    {
+    return runningReduceProcesses++;
+    }
   }

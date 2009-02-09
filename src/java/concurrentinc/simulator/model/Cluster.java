@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 /**
  *
  */
-@Entity
+@Entity({Cluster.class})
 public class Cluster
   {
   private static final Logger LOG = LoggerFactory.getLogger( Cluster.class );
@@ -102,7 +102,7 @@ public class Cluster
       startMap();
     }
 
-  public void releaseMap()
+  public void releaseMapProcess()
     {
     currentProcesses--;
     currentMapProcesses--;
@@ -124,14 +124,7 @@ public class Cluster
     currentProcesses++;
     currentMapProcesses++;
 
-    try
-      {
-      mapQueue.remove().execute( network );
-      }
-    catch( InterruptedException e )
-      {
-      // ignore
-      }
+    mapQueue.remove().execute( network );
     }
 
   private void queueReduces( Collection<ReduceProcess> reduces )
@@ -152,7 +145,7 @@ public class Cluster
     queueReduces( reduces );
     }
 
-  public void releaseReduce()
+  public void releaseReduceProcess()
     {
     currentProcesses--;
     currentReduceProcesses--;
@@ -174,14 +167,7 @@ public class Cluster
     currentProcesses++;
     currentReduceProcesses++;
 
-    try
-      {
-      reduceQueue.remove().execute( network );
-      }
-    catch( InterruptedException e )
-      {
-      // ignore
-      }
+    reduceQueue.remove().execute( network );
     }
 
   }

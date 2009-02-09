@@ -22,6 +22,8 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Kronos;
+import com.hellblazer.primeMover.Entity;
+import com.hellblazer.primeMover.Blocking;
 import concurrentinc.simulator.params.NetworkParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +31,11 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-//@Entity
+@Entity({Network.class})
 public class Network
   {
   private static final Logger LOG = LoggerFactory.getLogger( Network.class );
+
   NetworkParams networkParams;
 
   public Network()
@@ -44,7 +47,7 @@ public class Network
     this.networkParams = networkParams;
     }
 
-  //  @Blocking
+  @Blocking
   public void read( long sizeMb )
     {
     float readSleep = sizeMb / networkParams.bandwidth * 1000;
@@ -55,7 +58,7 @@ public class Network
     Kronos.sleep( (long) readSleep );
     }
 
-  //  @Blocking
+  @Blocking
   public void write( long amountMb )
     {
     float writeSleep = amountMb / networkParams.bandwidth * 1000;

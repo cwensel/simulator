@@ -26,7 +26,7 @@ import com.hellblazer.primeMover.Entity;
 /**
  *
  */
-@Entity
+@Entity({ReduceProcess.class})
 public class ReduceProcess
   {
   MRJob job;
@@ -40,12 +40,14 @@ public class ReduceProcess
     this.reducer = reducer;
     }
 
-  public void execute( Network network ) throws InterruptedException
+  public void execute( Network network )
     {
+    job.runningReduceProcess();
+
     shuffler.execute( network );
     reducer.execute( network );
 
-    job.releaseReduce( this );
+    job.releaseReduceProcess( this );
     }
 
   }

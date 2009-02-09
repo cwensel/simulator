@@ -34,29 +34,29 @@ public class Mapper
 
   DistributedData data;
   float processingFactor;
-  long sizeMb;
+  long allocatedSizeMb;
 
-  public Mapper( DistributedData data, float processingFactor, long sizeMb )
+  public Mapper( DistributedData data, float processingFactor, long allocatedSizeMb )
     {
     this.data = data;
     this.processingFactor = processingFactor;
-    this.sizeMb = sizeMb;
+    this.allocatedSizeMb = allocatedSizeMb;
     }
 
-  public void execute( Network network )
+  public void execute( Network network, int runningMapProcesses )
     {
-    blockReadingData( network );
+    blockReadingData( network, runningMapProcesses );
     blockProcessingData();
     }
 
-  private void blockReadingData( Network network )
+  private void blockReadingData( Network network, int runningJobMapProcesses )
     {
-    data.read( network, sizeMb );
+    data.read( network, allocatedSizeMb, runningJobMapProcesses );
     }
 
   private void blockProcessingData()
     {
-    float mapperSleep = sizeMb / processingFactor * 1000;
+    float mapperSleep = allocatedSizeMb / processingFactor * 1000;
 
     if( LOG.isDebugEnabled() )
       LOG.debug( "mapperSleep = " + mapperSleep );

@@ -26,7 +26,7 @@ import com.hellblazer.primeMover.Entity;
 /**
  *
  */
-@Entity
+@Entity({MapProcess.class})
 public class MapProcess
   {
   MRJob job;
@@ -38,10 +38,10 @@ public class MapProcess
     this.mapper = mapper;
     }
 
-  public void execute( Network network ) throws InterruptedException
+  public void execute( Network network )
     {
-    mapper.execute( network );
+    mapper.execute( network, job.runningMapProcess() );
 
-    job.releaseMap( this );
+    job.releaseMapProcess( this );
     }
   }

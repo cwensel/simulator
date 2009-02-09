@@ -35,8 +35,6 @@ public class DistributedData
   public int blockSizeMb = 128;
   public int fileReplication = 3;
 
-  long readCounter;
-
   public DistributedData( int sizeMb )
     {
     this.sizeMb = sizeMb;
@@ -49,19 +47,24 @@ public class DistributedData
     this.fileReplication = fileReplication;
     }
 
-  private int getNumBlocks()
+  public int getNumBlocks()
     {
     return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
     }
 
-  private int getNumReplicatedBlocks()
+  public int getNumReplicatedBlocks()
     {
     return getNumBlocks() * fileReplication;
     }
 
-  public void read( Network network, long amountMb )
+  public void read( Network network, long amountMb, int runningJobMapProcesses )
     {
-    if( readCounter++ < getNumReplicatedBlocks() )
+    double readingBlocks = Math.ceil( amountMb / blockSizeMb );
+
+    if( readingBlocks > 1 )
+      throw new IllegalStateException( "cannot read more than one block for now" );
+
+    if( runningJobMapProcesses < getNumReplicatedBlocks() )
       return;
 
     network.read( amountMb );
