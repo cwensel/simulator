@@ -78,7 +78,7 @@ public class ClusterImpl implements Cluster
     workload.start( this );
     }
 
-  public void submitJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException
+  public void submitMRJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException
     {
     job.startJob( this, distributedData );
     }

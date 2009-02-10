@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
  */
 public interface Cluster
   {
-  void submitJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException;
+  void submitMRJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException;
 
   void endJob( MRJob job );
 
