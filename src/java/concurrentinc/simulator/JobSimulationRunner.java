@@ -114,7 +114,7 @@ public class JobSimulationRunner
     Cluster cluster = new ClusterImpl( clusterParams );
     Workload workload = new WorkloadImpl( params );
 
-    cluster.submitWorkLoadJob( workload );
+    cluster.submitWorkload( workload );
 
     controller.eventLoop();
 

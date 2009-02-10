@@ -73,7 +73,7 @@ public class ClusterImpl implements Cluster
     this.maxReduceProcesses = maxReduceProcesses;
     }
 
-  public void submitWorkLoadJob( Workload workload )
+  public void submitWorkload( Workload workload )
     {
     workload.start( this );
     }
