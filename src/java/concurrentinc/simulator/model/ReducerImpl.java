@@ -51,21 +51,13 @@ public class ReducerImpl implements Reducer
   @Blocking
   public void execute( Network network )
     {
-    blockProcessing();
-    blockWriting( network );
-    }
-
-  private void blockWriting( Network network )
-    {
-    data.write( network, outputSizeMb );
-    }
-
-  private void blockProcessing()
-    {
     float reducerSleep = processSizeMb / processingFactor * 1000;
 
     LOG.debug( "reducerSleep = {}", reducerSleep );
 
     Kronos.blockingSleep( (long) reducerSleep );
+
+    data.write( network, outputSizeMb );
     }
+
   }

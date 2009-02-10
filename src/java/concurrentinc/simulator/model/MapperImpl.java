@@ -49,21 +49,13 @@ public class MapperImpl implements Mapper
   @Blocking
   public void execute( Network network, int runningMapProcesses )
     {
-    blockReadingData( network, runningMapProcesses );
-    blockProcessingData();
-    }
+    data.read( network, allocatedSizeMb, runningMapProcesses );
 
-  private void blockReadingData( Network network, int runningJobMapProcesses )
-    {
-    data.read( network, allocatedSizeMb, runningJobMapProcesses );
-    }
-
-  private void blockProcessingData()
-    {
     float mapperSleep = allocatedSizeMb / processingFactor * 1000;
 
     LOG.debug( "mapperSleep = {}", mapperSleep );
 
     Kronos.blockingSleep( (long) mapperSleep );
     }
+
   }

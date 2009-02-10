@@ -22,6 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.Continuable;
 
 /**
  *

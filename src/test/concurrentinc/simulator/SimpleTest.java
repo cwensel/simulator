@@ -54,9 +54,6 @@ public class SimpleTest extends SimulationTests
 
   public void testSimpleJobRun() throws Exception
     {
-    System.out.println( "getClassLoader() = " + getClassLoader() );
-    System.out.println( "getClassLoader() = " + Thread.currentThread().getContextClassLoader() );
-
     WorkloadParams params = new WorkloadParams( TERA, new MRJobParams( 100, 100 ) );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( getClassLoader(), params );
