@@ -59,9 +59,8 @@ public class ShufflerImpl implements Shuffler
     double bigO = sizeMb * Math.log10( sizeMb );
     double sortSleep = bigO / sortFactor * 1000;
 
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "bigO = " + bigO + " sortSleep = " + sortSleep );
+    LOG.debug( "bigO = {} sortSleep = {}", bigO, sortSleep );
 
-    Kronos.sleep( (long) sortSleep );
+    Kronos.blockingSleep( (long) sortSleep );
     }
   }

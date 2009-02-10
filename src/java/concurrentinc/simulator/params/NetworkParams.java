@@ -26,7 +26,7 @@ package concurrentinc.simulator.params;
  */
 public class NetworkParams
   {
-  public int bandwidth = 10 * 1024; // Mb / sec;;
+  public int bandwidth = 10 * 1024; // Mb / sec
 
   public NetworkParams()
     {

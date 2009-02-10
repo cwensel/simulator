@@ -64,9 +64,8 @@ public class ReducerImpl implements Reducer
     {
     float reducerSleep = processSizeMb / processingFactor * 1000;
 
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "reducerSleep = " + reducerSleep );
+    LOG.debug( "reducerSleep = {}", reducerSleep );
 
-    Kronos.sleep( (long) reducerSleep );
+    Kronos.blockingSleep( (long) reducerSleep );
     }
   }

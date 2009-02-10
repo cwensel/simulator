@@ -90,8 +90,7 @@ public class ClusterImpl implements Cluster
 
   public void executeMaps( Collection<MapProcess> maps )
     {
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "maps = " + maps.size() );
+    LOG.debug( "maps = {}", maps.size() );
 
     queueMaps( maps );
     }
@@ -143,8 +142,7 @@ public class ClusterImpl implements Cluster
 
   public void executeReduces( Collection<ReduceProcess> reduces )
     {
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "reduces = " + reduces.size() );
+    LOG.debug( "reduces = {}", reduces.size() );
 
     queueReduces( reduces );
     }

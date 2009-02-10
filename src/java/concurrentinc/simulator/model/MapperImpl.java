@@ -62,9 +62,8 @@ public class MapperImpl implements Mapper
     {
     float mapperSleep = allocatedSizeMb / processingFactor * 1000;
 
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "mapperSleep = " + mapperSleep );
+    LOG.debug( "mapperSleep = {}", mapperSleep );
 
-    Kronos.sleep( (long) mapperSleep );
+    Kronos.blockingSleep( (long) mapperSleep );
     }
   }

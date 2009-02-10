@@ -52,10 +52,9 @@ public class NetworkImpl implements Network
     {
     float readSleep = sizeMb / networkParams.bandwidth * 1000;
 
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "readSleep = " + readSleep );
+    LOG.debug( "readSleep = {}", readSleep );
 
-    Kronos.sleep( (long) readSleep );
+    Kronos.blockingSleep( (long) readSleep );
     }
 
   @Blocking
@@ -63,9 +62,8 @@ public class NetworkImpl implements Network
     {
     float writeSleep = amountMb / networkParams.bandwidth * 1000;
 
-    if( LOG.isDebugEnabled() )
-      LOG.debug( "writeSleep = " + writeSleep );
+    LOG.debug( "writeSleep = {}", writeSleep );
 
-    Kronos.sleep( (long) writeSleep );
+    Kronos.blockingSleep( (long) writeSleep );
     }
   }
