@@ -64,14 +64,24 @@ public class DistributedData
     if( readingBlocks > 1 )
       throw new IllegalStateException( "cannot read more than one block for now" );
 
-    if( runningJobMapProcesses < getNumReplicatedBlocks() )
+    int numReplicatedBlocks = getNumReplicatedBlocks();
+
+    LOG.debug( "numReplicatedBlocks = {}", numReplicatedBlocks );
+
+    if( runningJobMapProcesses < numReplicatedBlocks )
       return;
+
+    LOG.debug( "reading bytes from network = {}", amountMb );
 
     network.read( amountMb );
     }
 
   public void write( Network network, long amountMb )
     {
-    network.write( amountMb * fileReplication );
+    long writingAmount = amountMb * fileReplication;
+
+    LOG.debug( "writing amount to network = {}", writingAmount );
+
+    network.write( writingAmount );
     }
   }

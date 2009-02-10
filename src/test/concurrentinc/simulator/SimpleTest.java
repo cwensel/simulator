@@ -36,8 +36,6 @@ public class SimpleTest extends SimulationTests
 
   public void testShortJobRun() throws Exception
     {
-    System.out.println( "getClassLoader() = " + getClassLoader() );
-
     WorkloadParams params = new WorkloadParams( TERA, new MRJobParams( 1, 1 ) );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( getClassLoader(), params );
@@ -49,7 +47,7 @@ public class SimpleTest extends SimulationTests
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT4M14.977S", jobRun.getDuration().toString() );
+    assertEquals( "PT7H39M5.614S", jobRun.getDuration().toString() );
     }
 
   public void testSimpleJobRun() throws Exception

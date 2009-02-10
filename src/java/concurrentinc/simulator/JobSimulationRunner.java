@@ -105,7 +105,10 @@ public class JobSimulationRunner
   public void run( ClusterParams clusterParams ) throws ExecutionException, InterruptedException, SimulationException
     {
     SimController controller = new SimController();
-    controller.setCurrentTime( new Instant() );
+    Instant startInstant = new Instant(0); // start at time zero
+
+    controller.setStartTime( startInstant );
+    controller.setCurrentTime( startInstant );
 
     Framework.setController( controller );
 
