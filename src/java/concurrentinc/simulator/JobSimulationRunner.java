@@ -24,12 +24,11 @@ package concurrentinc.simulator;
 import com.hellblazer.primeMover.runtime.Framework;
 import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.controller.SimController;
-import concurrentinc.simulator.model.WorkLoadJob;
-import concurrentinc.simulator.model.ClusterImpl;
-import concurrentinc.simulator.model.Cluster;
-import concurrentinc.simulator.model.WorkLoadJobImpl;
+import concurrentinc.simulator.model.WorkloadImpl;
+import concurrentinc.simulator.model.Workload;
+import concurrentinc.simulator.model.*;
 import concurrentinc.simulator.params.ClusterParams;
-import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.WorkloadParams;
 import concurrentinc.simulator.util.PrintableImpl;
 import concurrentinc.simulator.util.Printer;
 import org.joda.time.Instant;
@@ -50,9 +49,9 @@ public class JobSimulationRunner
     public Instant endTime;
     public Period duration;
     public int durationSeconds;
-    public JobParams params;
+    public WorkloadParams params;
 
-    RunResults( Instant startTime, Instant endTime, Period duration, int durationSeconds, JobParams params )
+    RunResults( Instant startTime, Instant endTime, Period duration, int durationSeconds, WorkloadParams params )
       {
       this.startTime = startTime;
       this.endTime = endTime;
@@ -64,10 +63,12 @@ public class JobSimulationRunner
 
   private Instant startTime;
   private Instant endTime;
-  private JobParams params;
+  private ClassLoader classLoader;
+  private WorkloadParams params;
 
-  public JobSimulationRunner( JobParams params )
+  public JobSimulationRunner( ClassLoader classLoader, WorkloadParams params )
     {
+    this.classLoader = classLoader;
     this.params = params;
     }
 
@@ -108,10 +109,12 @@ public class JobSimulationRunner
 
     Framework.setController( controller );
 
-    Cluster cluster = new ClusterImpl( clusterParams );
-    WorkLoadJob workLoadJob = new WorkLoadJobImpl( params );
+    Thread.currentThread().setContextClassLoader( classLoader );
 
-    cluster.submitWorkLoadJob( workLoadJob );
+    Cluster cluster = new ClusterImpl( clusterParams );
+    Workload workload = new WorkloadImpl( params );
+
+    cluster.submitWorkLoadJob( workload );
 
     controller.eventLoop();
 

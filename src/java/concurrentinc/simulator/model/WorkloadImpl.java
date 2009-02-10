@@ -22,7 +22,7 @@
 package concurrentinc.simulator.model;
 
 import com.hellblazer.primeMover.Entity;
-import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.WorkloadParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.MRJobParamsGraph;
 import org.jgrapht.EdgeFactory;
@@ -38,20 +38,20 @@ import java.util.Map;
 /**
  *
  */
-@Entity({WorkLoadJob.class})
-public class WorkLoadJobImpl extends SimpleDirectedGraph<MRJob, Integer> implements WorkLoadJob
+@Entity({Workload.class})
+public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements Workload
   {
   private DistributedData distributedData;
 
-  public WorkLoadJobImpl( JobParams jobParams )
+  public WorkloadImpl( WorkloadParams workloadParams )
     {
     this();
-    this.distributedData = jobParams.distributedData;
+    this.distributedData = workloadParams.distributedData;
 
-    populate( jobParams.mrParams );
+    populate( workloadParams.mrParams );
     }
 
-  private WorkLoadJobImpl()
+  private WorkloadImpl()
     {
     super( new EdgeFactory<MRJob, Integer>()
     {

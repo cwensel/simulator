@@ -23,7 +23,7 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.test.SimulationTests;
 import concurrentinc.simulator.params.ClusterParams;
-import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.WorkloadParams;
 import concurrentinc.simulator.params.MRJobParams;
 
 /**
@@ -34,11 +34,32 @@ public class SimpleTest extends SimulationTests
   public static final int TERA = 1 * 1024 * 1024;
   public static final int MEGA = 1 * 1024;
 
+  public void testShortJobRun() throws Exception
+    {
+    System.out.println( "getClassLoader() = " + getClassLoader() );
+
+    WorkloadParams params = new WorkloadParams( TERA, new MRJobParams( 1, 1 ) );
+
+    JobSimulationRunner jobRun = new JobSimulationRunner( getClassLoader(), params );
+
+    jobRun.run( new ClusterParams( 1, 1 ) );
+
+    System.out.println( "start: " + jobRun.getStartTime() );
+
+    System.out.println( "end: " + jobRun.getEndTime() );
+    System.out.println( "duration: " + jobRun.getDuration() );
+
+    assertEquals( "PT4M14.977S", jobRun.getDuration().toString() );
+    }
+
   public void testSimpleJobRun() throws Exception
     {
-    JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ) );
+    System.out.println( "getClassLoader() = " + getClassLoader() );
+    System.out.println( "getClassLoader() = " + Thread.currentThread().getContextClassLoader() );
 
-    JobSimulationRunner jobRun = new JobSimulationRunner( params );
+    WorkloadParams params = new WorkloadParams( TERA, new MRJobParams( 100, 100 ) );
+
+    JobSimulationRunner jobRun = new JobSimulationRunner( getClassLoader(), params );
 
     jobRun.run( new ClusterParams( 100, 100 ) );
 
@@ -52,9 +73,9 @@ public class SimpleTest extends SimulationTests
 
   public void testChainedJobRun() throws Exception
     {
-    JobParams params = new JobParams( TERA, new MRJobParams( 100, 100 ), new MRJobParams( 100, 100 ) );
+    WorkloadParams params = new WorkloadParams( TERA, new MRJobParams( 100, 100 ), new MRJobParams( 100, 100 ) );
 
-    JobSimulationRunner jobRun = new JobSimulationRunner( params );
+    JobSimulationRunner jobRun = new JobSimulationRunner( getClassLoader(), params );
 
     jobRun.run( new ClusterParams( 100, 100 ) );
 

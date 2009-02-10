@@ -23,7 +23,7 @@ package concurrentinc.simulator;
 
 import com.hellblazer.primeMover.runtime.SimulationException;
 import concurrentinc.simulator.params.ClusterParams;
-import concurrentinc.simulator.params.JobParams;
+import concurrentinc.simulator.params.WorkloadParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.NetworkParams;
 
@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class SimpleRunner
   {
-  public static void run( PrintWriter writer, JobParams start, JobParams end, JobParams increment, float sample ) throws ExecutionException, InterruptedException, SimulationException
+  public static void run( PrintWriter writer, WorkloadParams start, WorkloadParams end, WorkloadParams increment, float sample ) throws ExecutionException, InterruptedException, SimulationException
     {
     Random random = new Random();
     boolean first = true;
@@ -57,9 +57,9 @@ public class SimpleRunner
               if( !first && sample != 1.0 && random.nextFloat() > sample )
                 continue;
 
-              JobParams jobParams = new JobParams( inputSizeMb, new MRJobParams( numMappers, numReducers ) );
+              WorkloadParams workloadParams = new WorkloadParams( inputSizeMb, new MRJobParams( numMappers, numReducers ) );
 
-              JobSimulationRunner runner = new JobSimulationRunner( jobParams );
+              JobSimulationRunner runner = new JobSimulationRunner( SimpleRunner.class.getClassLoader(), workloadParams );
 
               runner.run( clusterParams );
 

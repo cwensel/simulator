@@ -29,30 +29,30 @@ import java.util.List;
 /**
  *
  */
-public class JobParams extends PrintableImpl
+public class WorkloadParams extends PrintableImpl
   {
   public DistributedData distributedData;
   public MRJobParamsGraph mrParams;
 
-  public JobParams( int inputSizeMb, MRJobParams... mrParams )
+  public WorkloadParams( int inputSizeMb, MRJobParams... mrParams )
     {
     this.distributedData = new DistributedData( inputSizeMb );
     this.mrParams = new MRJobParamsGraph( mrParams );
     }
 
-  public JobParams( int inputSizeMb, MRJobParamsGraph mrParams )
+  public WorkloadParams( int inputSizeMb, MRJobParamsGraph mrParams )
     {
     this.distributedData = new DistributedData( inputSizeMb );
     this.mrParams = mrParams;
     }
 
-  public JobParams( int inputSizeMb, MRJobParamsGraph mrParams, int blockSizeMb, int fileReplication )
+  public WorkloadParams( int inputSizeMb, MRJobParamsGraph mrParams, int blockSizeMb, int fileReplication )
     {
     this.distributedData = new DistributedData( inputSizeMb, blockSizeMb, fileReplication );
     this.mrParams = mrParams;
     }
 
-  public JobParams( DistributedData distributedData, MRJobParamsGraph mrParams )
+  public WorkloadParams( DistributedData distributedData, MRJobParamsGraph mrParams )
     {
     this.distributedData = distributedData;
     this.mrParams = mrParams;

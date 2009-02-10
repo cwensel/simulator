@@ -24,7 +24,7 @@ package concurrentinc.simulator.model;
 /**
  *
  */
-public interface WorkLoadJob
+public interface Workload
   {
   void start( Cluster cluster );
   }

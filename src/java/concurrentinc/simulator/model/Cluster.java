@@ -43,5 +43,5 @@ public interface Cluster
 
   void startReduce();
 
-  void submitWorkLoadJob( WorkLoadJob workLoadJob );
+  void submitWorkLoadJob( Workload workload );
   }
