@@ -1,2 +1,13 @@
+junitvm*.properties
+build.properties
 .DS_Store
+lib
 build
+dist
+out
+javadoc
+*.iws
+workspace.xml
+tasks.xml
+runConfigurations
+*.tmproj
