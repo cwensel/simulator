@@ -14,6 +14,8 @@ import concurrentinc.simulator.model.Bandwidth;
 public class NetworkParams
   {
   public double bandwidthMbS = Bandwidth.Gigabit10;
+  public double readEfficiency = 1.0d;
+  public double writeEfficiency = 1.0d;
 
   public NetworkParams()
     {
@@ -23,4 +25,22 @@ public class NetworkParams
     {
     this.bandwidthMbS = bandwidthMbS;
     }
+
+  public NetworkParams( double bandwidthMbS, double readEfficiency, double writeEfficiency )
+    {
+    this.bandwidthMbS = bandwidthMbS;
+    this.readEfficiency = readEfficiency;
+    this.writeEfficiency = writeEfficiency;
+    }
+
+  public double getEffectiveReadMbS()
+    {
+    return bandwidthMbS * readEfficiency;
+    }
+
+  public double getEffectiveWriteMbS()
+    {
+    return bandwidthMbS * writeEfficiency;
+    }
+
   }

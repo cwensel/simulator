@@ -6,9 +6,7 @@
 
 package concurrentinc.simulator.model;
 
-/**
- *
- */
+/** Nominal bandwidth for common interfaces. */
 public interface Bandwidth
   {
   long MB = 1;

@@ -33,19 +33,19 @@ public class NetworkImpl implements Network
 
   public void read( long sizeMb )
     {
-    long readSleep = (long) ( sizeMb / networkParams.bandwidthMbS * 1000 );
+    long readSleepMs = (long) ( sizeMb / networkParams.getEffectiveReadMbS() * 1000 );
 
-    LOG.debug( "readSleep = {}", readSleep );
+    LOG.debug( "readSleepMs = {}", readSleepMs );
 
-    Kronos.blockingSleep( (long) readSleep );
+    Kronos.blockingSleep( readSleepMs );
     }
 
   public void write( long sizeMB )
     {
-    long writeSleep = (long) ( sizeMB / networkParams.bandwidthMbS * 1000 );
+    long writeSleepMs = (long) ( sizeMB / networkParams.getEffectiveWriteMbS() * 1000 );
 
-    LOG.debug( "writeSleep = {}", writeSleep );
+    LOG.debug( "writeSleepMs = {}", writeSleepMs );
 
-    Kronos.blockingSleep( (long) writeSleep );
+    Kronos.blockingSleep( writeSleepMs );
     }
   }
