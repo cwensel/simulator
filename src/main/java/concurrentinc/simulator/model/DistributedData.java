@@ -18,7 +18,7 @@ public class DistributedData extends PrintableImpl
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
   public double sizeMb;
-  public int blockSizeMb = 128;
+  public double blockSizeMb = 128;
   public int fileReplication = 3;
 
   public DistributedData( double sizeMb )
@@ -26,7 +26,7 @@ public class DistributedData extends PrintableImpl
     this.sizeMb = sizeMb;
     }
 
-  public DistributedData( double sizeMb, int blockSizeMb, int fileReplication )
+  public DistributedData( double sizeMb, double blockSizeMb, int fileReplication )
     {
     this.sizeMb = sizeMb;
     this.blockSizeMb = blockSizeMb;

@@ -36,7 +36,7 @@ public class MRJobImpl implements MRJob
     this.mrJobParams = mrJobParams;
     }
 
-  private int getBlockSizeMb()
+  private double getBlockSizeMb()
     {
     return inputData.blockSizeMb;
     }

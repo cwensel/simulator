@@ -47,7 +47,6 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
       return count++;
       }
     } );
-
     }
 
   private void populate( MRJobParamsGraph mrParams )
@@ -74,12 +73,12 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
       }
     }
 
-  public Iterator<MRJob> getToplogicalIterator()
+  public Iterator<MRJob> getTopologicalIterator()
     {
     return new TopologicalOrderIterator<MRJob, Integer>( this );
     }
 
-  public Iterator<MRJob> getReverseToplogicalIterator()
+  public Iterator<MRJob> getReverseTopologicalIterator()
     {
     SimpleDirectedGraph<MRJob, Integer> graph = new SimpleDirectedGraph<MRJob, Integer>( Integer.class );
 
@@ -90,7 +89,7 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
 
   public void start( Cluster cluster )
     {
-    Iterator<MRJob> jobsIterator = getToplogicalIterator();
+    Iterator<MRJob> jobsIterator = getTopologicalIterator();
 
     while( jobsIterator.hasNext() )
       {
