@@ -22,10 +22,10 @@ public class ShufflerImpl implements Shuffler
 
   private float sortFactor = 1024; // Mb / sec
   private long sortBlockSizeMb;
-  private int numMappers;
+  private long numMappers;
   private long sizeMb;
 
-  public ShufflerImpl( long sortBlockSizeMb, int numMappers, long sizeMb )
+  public ShufflerImpl( long sortBlockSizeMb, long numMappers, long sizeMb )
     {
     this.sortBlockSizeMb = sortBlockSizeMb;
     this.numMappers = numMappers;

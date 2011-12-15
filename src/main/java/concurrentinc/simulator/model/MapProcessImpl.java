@@ -12,7 +12,7 @@ import com.hellblazer.primeMover.Entity;
  *
  */
 @Entity({MapProcess.class})
-public class MapProcessImpl implements MapProcess
+public class MapProcessImpl implements MapProcess, TaskProcess
   {
   private MRJob job;
   private Mapper mapper;
@@ -21,6 +21,12 @@ public class MapProcessImpl implements MapProcess
     {
     this.job = (MRJobImpl) job;
     this.mapper = (MapperImpl) mapper;
+    }
+
+  @Override
+  public DistributedData getOutputData()
+    {
+    return ( (MapperImpl) mapper ).getOutputData();
     }
 
   public void execute( Network network )

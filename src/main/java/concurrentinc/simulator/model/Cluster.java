@@ -7,15 +7,12 @@
 package concurrentinc.simulator.model;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
  */
 public interface Cluster
   {
-  void submitMRJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException;
-
   void endJob( MRJob job );
 
   void executeMaps( Collection<MapProcess> maps );

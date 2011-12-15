@@ -7,6 +7,7 @@
 package concurrentinc.simulator;
 
 import concurrentinc.simulator.model.Bandwidth;
+import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.WorkloadParams;
@@ -20,7 +21,10 @@ public class SimpleTest extends TestCase
 
   public void testShortJobRun() throws Exception
     {
-    WorkloadParams params = new WorkloadParams( Bandwidth.TB, new MRJobParams( 1, 1 ) );
+    MRJobParams mrJobParams = new MRJobParams( 1, 1 );
+    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+
+    WorkloadParams params = new WorkloadParams( mrJobParams );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( params );
 
@@ -36,7 +40,10 @@ public class SimpleTest extends TestCase
 
   public void testSimpleJobRun() throws Exception
     {
-    WorkloadParams params = new WorkloadParams( Bandwidth.TB, new MRJobParams( 100, 100 ) );
+    MRJobParams mrJobParams = new MRJobParams( 100, 100 );
+    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+
+    WorkloadParams params = new WorkloadParams( mrJobParams );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( params );
 
@@ -52,7 +59,10 @@ public class SimpleTest extends TestCase
 
   public void testChainedJobRun() throws Exception
     {
-    WorkloadParams params = new WorkloadParams( Bandwidth.TB, new MRJobParams( 100, 100 ), new MRJobParams( 100, 100 ) );
+    MRJobParams mrJobParams = new MRJobParams( 100, 100 );
+    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+
+    WorkloadParams params = new WorkloadParams( mrJobParams, new MRJobParams( 100, 100 ) );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( params );
 
@@ -63,6 +73,6 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT7M1.568S", jobRun.getDuration().toString() );
+    assertEquals( "PT4M35.551S", jobRun.getDuration().toString() );
     }
   }

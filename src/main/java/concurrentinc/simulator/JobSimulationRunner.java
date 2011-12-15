@@ -23,12 +23,16 @@ import org.joda.time.Instant;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class JobSimulationRunner
   {
+  private static final Logger LOG = LoggerFactory.getLogger( JobSimulationRunner.class );
+
   public class RunResults extends PrintableImpl
     {
     public Instant startTime;
@@ -49,11 +53,11 @@ public class JobSimulationRunner
 
   private Instant startTime;
   private Instant endTime;
-  private WorkloadParams params;
+  private WorkloadParams workloadParams;
 
-  public JobSimulationRunner( WorkloadParams params )
+  public JobSimulationRunner( WorkloadParams workloadParams )
     {
-    this.params = params;
+    this.workloadParams = workloadParams;
     }
 
   public Instant getStartTime()
@@ -88,6 +92,7 @@ public class JobSimulationRunner
 
   public void run( ClusterParams clusterParams ) throws ExecutionException, InterruptedException, SimulationException
     {
+    LOG.debug( "starting cluster simulation" );
     SimulationController controller = new SimulationController();
     Instant startInstant = new Instant( 0 ); // start at time zero
 
@@ -97,7 +102,7 @@ public class JobSimulationRunner
     Kronos.setController( controller );
 
     Cluster cluster = new ClusterImpl( clusterParams );
-    Workload workload = new WorkloadImpl( params );
+    Workload workload = new WorkloadImpl( workloadParams );
 
     cluster.submitWorkload( workload );
 
@@ -105,11 +110,13 @@ public class JobSimulationRunner
 
     setStartTime( new Instant( controller.getSimulationStart() ) );
     setEndTime( new Instant( controller.getSimulationEnd() ) );
+
+    LOG.debug( "ended cluster simulation" );
     }
 
   public String print()
     {
-    return new RunResults( startTime, endTime, getDuration(), getDurationSeconds().getSeconds(), params ).print();
+    return new RunResults( startTime, endTime, getDuration(), getDurationSeconds().getSeconds(), workloadParams ).print();
     }
 
   public String printFields()

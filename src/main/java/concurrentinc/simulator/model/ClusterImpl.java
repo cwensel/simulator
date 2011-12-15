@@ -9,7 +9,6 @@ package concurrentinc.simulator.model;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
 
 import com.hellblazer.primeMover.Entity;
 import concurrentinc.simulator.params.ClusterParams;
@@ -60,12 +59,8 @@ public class ClusterImpl implements Cluster
 
   public void submitWorkload( Workload workload )
     {
+    LOG.info( "received workload: {}", workload );
     workload.start( this );
-    }
-
-  public void submitMRJob( MRJob job, DistributedData distributedData ) throws InterruptedException, ExecutionException
-    {
-    job.startJob( this, distributedData );
     }
 
   public void endJob( MRJob job )
@@ -75,7 +70,7 @@ public class ClusterImpl implements Cluster
 
   public void executeMaps( Collection<MapProcess> maps )
     {
-    LOG.debug( "maps = {}", maps.size() );
+    LOG.info( "executing maps = {}", maps.size() );
 
     queueMaps( maps );
     }
@@ -127,7 +122,7 @@ public class ClusterImpl implements Cluster
 
   public void executeReduces( Collection<ReduceProcess> reduces )
     {
-    LOG.debug( "reduces = {}", reduces.size() );
+    LOG.info( "executing reduces = {}", reduces.size() );
 
     queueReduces( reduces );
     }

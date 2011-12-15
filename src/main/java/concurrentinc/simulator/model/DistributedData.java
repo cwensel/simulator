@@ -6,6 +6,8 @@
 
 package concurrentinc.simulator.model;
 
+import java.util.List;
+
 import concurrentinc.simulator.util.PrintableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,5 +71,25 @@ public class DistributedData extends PrintableImpl
     LOG.debug( "writing amount to network = {}", writingAmount );
 
     network.write( writingAmount );
+    }
+
+  public static double totalDataSize( List<DistributedData> distributedData )
+    {
+    double total = 0;
+
+    for( DistributedData data : distributedData )
+      total += data.sizeMb;
+
+    return total;
+    }
+
+  public static long totalBlocks( List<DistributedData> distributedData )
+    {
+    long total = 0;
+
+    for( DistributedData data : distributedData )
+      total += data.getNumBlocks();
+
+    return total;
     }
   }

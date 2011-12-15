@@ -16,30 +16,17 @@ import concurrentinc.simulator.util.PrintableImpl;
  */
 public class WorkloadParams extends PrintableImpl
   {
-  public DistributedData distributedData;
+  public List<DistributedData> distributedData;
   public MRJobParamsGraph mrParams;
 
-  public WorkloadParams( double inputSizeMb, MRJobParams... mrParams )
+  public WorkloadParams( MRJobParams... mrJobParams )
     {
-    this.distributedData = new DistributedData( inputSizeMb );
-    this.mrParams = new MRJobParamsGraph( mrParams );
+    this( new MRJobParamsGraph( mrJobParams ) );
     }
 
-  public WorkloadParams( double inputSizeMb, MRJobParamsGraph mrParams )
+  public WorkloadParams( MRJobParamsGraph mrParams )
     {
-    this.distributedData = new DistributedData( inputSizeMb );
-    this.mrParams = mrParams;
-    }
-
-  public WorkloadParams( double inputSizeMb, MRJobParamsGraph mrParams, int blockSizeMb, int fileReplication )
-    {
-    this.distributedData = new DistributedData( inputSizeMb, blockSizeMb, fileReplication );
-    this.mrParams = mrParams;
-    }
-
-  public WorkloadParams( DistributedData distributedData, MRJobParamsGraph mrParams )
-    {
-    this.distributedData = distributedData;
+    this.distributedData = mrParams.getOrigins().get( 0 ).source;
     this.mrParams = mrParams;
     }
 
@@ -53,9 +40,14 @@ public class WorkloadParams extends PrintableImpl
     return origins.get( 0 );
     }
 
+  /**
+   * use for testing
+   *
+   * @return
+   */
   public double getInputSizeMB()
     {
-    return distributedData.sizeMb;
+    return DistributedData.totalDataSize( distributedData );
     }
 
   public MapperParams getMapperParams()

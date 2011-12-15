@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import com.hellblazer.primeMover.SimulationException;
+import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.NetworkParams;
@@ -67,7 +68,9 @@ public class SimpleRunner
 
   private boolean run( PrintWriter writer, boolean printFields, double inputSizeMb, int numMappers, int numReducers ) throws ExecutionException, InterruptedException, SimulationException
     {
-    WorkloadParams workloadParams = new WorkloadParams( inputSizeMb, new MRJobParams( numMappers, numReducers ) );
+    MRJobParams mrJobParams = new MRJobParams( numMappers, numReducers );
+    mrJobParams.source.add( new DistributedData( inputSizeMb ) );
+    WorkloadParams workloadParams = new WorkloadParams( mrJobParams );
 
     JobSimulationRunner runner = new JobSimulationRunner( workloadParams );
 

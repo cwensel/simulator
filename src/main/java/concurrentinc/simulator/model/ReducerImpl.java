@@ -33,6 +33,11 @@ public class ReducerImpl implements Reducer
     this.outputSizeMb = outputSizeMb;
     }
 
+  public DistributedData getOutputData()
+    {
+    return data;
+    }
+
   @Blocking
   public void execute( Network network )
     {

@@ -6,6 +6,10 @@
 
 package concurrentinc.simulator.params;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.util.PrintableImpl;
 
 /**
@@ -13,6 +17,12 @@ import concurrentinc.simulator.util.PrintableImpl;
  */
 public class MRJobParams extends PrintableImpl
   {
+  public double blockSizeMb = 128;
+  public int fileReplication = 3;
+
+  public List<DistributedData> source = new ArrayList<DistributedData>();
+  public List<DistributedData> sinks = new ArrayList<DistributedData>();
+
   public MapperParams mapper;
   public ReducerParams reducer;
 

@@ -26,7 +26,7 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
     {
     this();
 
-    addChained( jobParams );
+    addPath( jobParams );
     }
 
   public MRJobParamsGraph()
@@ -42,7 +42,7 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
     } );
     }
 
-  public void addChained( MRJobParams... jobParams )
+  public void addPath( MRJobParams... jobParams )
     {
     MRJobParams last = null;
 

@@ -10,6 +10,7 @@ package concurrentinc.simulator;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.WorkloadParams;
 
@@ -29,9 +30,13 @@ public class Dump
     MRJobParams mrParamsEnd = new MRJobParams( 1001, 1001 );
     MRJobParams mrParamsIncrement = new MRJobParams( 5, 5 );
 
-    WorkloadParams start = new WorkloadParams( 1 * 1024 * 1024, mrParamsStart );
-    WorkloadParams end = new WorkloadParams( 1 * 1024 * 1024, mrParamsEnd );
-    WorkloadParams increment = new WorkloadParams( 1024, mrParamsIncrement );
+    mrParamsStart.source.add( new DistributedData( 1 * 1024 * 1024 ) );
+    mrParamsEnd.source.add( new DistributedData( 1 * 1024 * 1024 ) );
+    mrParamsIncrement.source.add( new DistributedData( 1 * 1024 ) );
+
+    WorkloadParams start = new WorkloadParams( mrParamsStart );
+    WorkloadParams end = new WorkloadParams( mrParamsEnd );
+    WorkloadParams increment = new WorkloadParams( mrParamsIncrement );
 
     float sample = 0.01f;
 

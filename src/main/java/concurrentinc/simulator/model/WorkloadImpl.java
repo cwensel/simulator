@@ -6,11 +6,11 @@
 
 package concurrentinc.simulator.model;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.hellblazer.primeMover.Entity;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.MRJobParamsGraph;
@@ -26,12 +26,11 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 @Entity({Workload.class})
 public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements Workload
   {
-  private DistributedData distributedData;
+  private final BiMap<MRJobParams, MRJobImpl> paramJobMap = HashBiMap.create();
 
   public WorkloadImpl( WorkloadParams workloadParams )
     {
     this();
-    this.distributedData = workloadParams.distributedData;
 
     populate( workloadParams.mrParams );
     }
@@ -49,27 +48,26 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
     } );
     }
 
-  private void populate( MRJobParamsGraph mrParams )
+  private void populate( MRJobParamsGraph mrParamsGraph )
     {
-    Map<MRJobParams, MRJobImpl> map = new HashMap<MRJobParams, MRJobImpl>();
-    Iterator<MRJobParams> paramsIterator = mrParams.getTopologicalIterator();
+    Iterator<MRJobParams> paramsIterator = mrParamsGraph.getTopologicalIterator();
 
     while( paramsIterator.hasNext() )
       {
       MRJobParams params = paramsIterator.next();
       MRJobImpl mrJob = new MRJobImpl( params );
 
-      map.put( params, mrJob );
+      paramJobMap.put( params, mrJob );
 
       addVertex( mrJob );
       }
 
-    for( Integer integer : mrParams.edgeSet() )
+    for( Integer integer : mrParamsGraph.edgeSet() )
       {
-      MRJobParams source = mrParams.getEdgeSource( integer );
-      MRJobParams target = mrParams.getEdgeTarget( integer );
+      MRJobParams source = mrParamsGraph.getEdgeSource( integer );
+      MRJobParams target = mrParamsGraph.getEdgeTarget( integer );
 
-      addEdge( map.get( source ), map.get( target ), integer );
+      addEdge( paramJobMap.get( source ), paramJobMap.get( target ), integer );
       }
     }
 
@@ -96,10 +94,10 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
       MRJob mrJob = jobsIterator.next();
       List<MRJob> predecessors = Graphs.predecessorListOf( this, mrJob );
 
-      if( predecessors.size() != 0 )
-        mrJob.startJob( cluster, predecessors );
+      if( predecessors.size() == 0 )
+        mrJob.startJob( cluster, paramJobMap.inverse().get( mrJob ).source );
       else
-        mrJob.startJob( cluster, distributedData );
+        mrJob.blockOnPredecessors( cluster, predecessors );
       }
     }
   }

@@ -9,6 +9,7 @@ package concurrentinc.simulator.model;
 import java.util.List;
 
 import com.hellblazer.primeMover.Blocking;
+import com.hellblazer.primeMover.Continuable;
 import com.hellblazer.primeMover.NonEvent;
 
 /**
@@ -16,9 +17,10 @@ import com.hellblazer.primeMover.NonEvent;
  */
 public interface MRJob
   {
-  void startJob( Cluster cluster, DistributedData inputData );
+  void startJob( Cluster cluster, List<DistributedData> inputData );
 
-  void startJob( Cluster cluster, List<MRJob> predecessors );
+  @Continuable
+  void blockOnPredecessors( Cluster cluster, List<MRJob> predecessors );
 
   @Blocking
   void blockTillComplete();

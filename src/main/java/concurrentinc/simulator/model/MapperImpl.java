@@ -31,6 +31,11 @@ public class MapperImpl implements Mapper
     this.allocatedSizeMb = allocatedSizeMb;
     }
 
+  public DistributedData getOutputData()
+    {
+    return data;
+    }
+
   @Blocking
   public void execute( Network network, int runningMapProcesses )
     {
@@ -42,5 +47,4 @@ public class MapperImpl implements Mapper
 
     Kronos.blockingSleep( (long) mapperSleep );
     }
-
   }

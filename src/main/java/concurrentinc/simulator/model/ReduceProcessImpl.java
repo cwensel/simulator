@@ -12,7 +12,7 @@ import com.hellblazer.primeMover.Entity;
  *
  */
 @Entity({ReduceProcess.class})
-public class ReduceProcessImpl implements ReduceProcess
+public class ReduceProcessImpl implements ReduceProcess, TaskProcess
   {
   private MRJob job;
   private Shuffler shuffler;
@@ -26,6 +26,11 @@ public class ReduceProcessImpl implements ReduceProcess
     }
 
   static int count = 0;
+
+  public DistributedData getOutputData()
+    {
+    return ( (ReducerImpl) reducer ).getOutputData();
+    }
 
   public void execute( Network network )
     {
