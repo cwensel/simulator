@@ -1,10 +1,14 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
 
 package concurrentinc.simulator;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import concurrentinc.simulator.model.Bandwidth;
 import concurrentinc.simulator.model.DistributedData;
@@ -30,19 +34,32 @@ public class ComplexTest extends TestCase
     graph.addPath( first, second );
     graph.addPath( second, third );
 
-    DistributedData source = new DistributedData( Bandwidth.TB );
+    first.sources.add( new DistributedData( Bandwidth.TB ) );
+    first.sources.add( new DistributedData( Bandwidth.TB ) );
 
-    first.source.add( source );
+    Map<MRJobParams, List<DistributedData>> map = new HashMap<MRJobParams, List<DistributedData>>();
 
-    WorkloadParams workload = new WorkloadParams( graph );
+    map.put( first, first.sources );
+
+    WorkloadParams workload = new WorkloadParams( graph, map );
 
     JobSimulationRunner jobRun = new JobSimulationRunner( workload );
 
-    jobRun.run( new ClusterParams( 10, 10 ) );
+    WorkloadParams resultWorkload = jobRun.run( new ClusterParams( 10, 10 ) );
 
     System.out.println( "start: " + jobRun.getStartTime() );
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
+
+    List<MRJobParams> resultOrigins = resultWorkload.mrParams.getOrigins();
+
+    assertEquals( 1, resultOrigins.size() );
+
+    MRJobParams firstResult = resultOrigins.get( 0 );
+    long calculatedNumBlocks = DistributedData.totalBlocks( firstResult.sources );
+
+    assertEquals( 2 * Bandwidth.TB / 128, calculatedNumBlocks );
+    assertEquals( calculatedNumBlocks, firstResult.mapper.getRequestedNumProcesses() );
 
 //    assertEquals( "PT7M1.568S", jobRun.getDuration().toString() );
     }

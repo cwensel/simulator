@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -65,7 +65,7 @@ public class ClusterImpl implements Cluster
 
   public void endJob( MRJob job )
     {
-
+    LOG.info( "ended job: {}", job );
     }
 
   public void executeMaps( Collection<MapProcess> maps )

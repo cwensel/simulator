@@ -1,13 +1,15 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
 
 package concurrentinc.simulator.model;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -28,9 +30,12 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
   {
   private final BiMap<MRJobParams, MRJobImpl> paramJobMap = HashBiMap.create();
 
+  private WorkloadParams workloadParams;
+
   public WorkloadImpl( WorkloadParams workloadParams )
     {
     this();
+    this.workloadParams = workloadParams;
 
     populate( workloadParams.mrParams );
     }
@@ -46,6 +51,30 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
       return count++;
       }
     } );
+    }
+
+  public WorkloadParams getResultWorkloadParams()
+    {
+    Map<MRJob, MRJobParams> paramsMap = new HashMap<MRJob, MRJobParams>();
+    MRJobParamsGraph resultMRParamsGraph = new MRJobParamsGraph();
+    Iterator<MRJob> iterator = getTopologicalIterator();
+
+    while( iterator.hasNext() )
+      {
+      MRJob current = iterator.next();
+
+      MRJobParams params = ( (MRJobImpl) current ).getResultMRJobParams();
+      paramsMap.put( current, params );
+      resultMRParamsGraph.addVertex( params );
+      }
+
+    for( MRJob fromJob : paramsMap.keySet() )
+      {
+      for( MRJob toJob : Graphs.successorListOf( this, fromJob ) )
+        resultMRParamsGraph.addPath( paramsMap.get( fromJob ), paramsMap.get( toJob ) );
+      }
+
+    return new WorkloadParams( resultMRParamsGraph );
     }
 
   private void populate( MRJobParamsGraph mrParamsGraph )
@@ -94,10 +123,16 @@ public class WorkloadImpl extends SimpleDirectedGraph<MRJob, Integer> implements
       MRJob mrJob = jobsIterator.next();
       List<MRJob> predecessors = Graphs.predecessorListOf( this, mrJob );
 
+      // don't get the actual data, use the passed params map data
       if( predecessors.size() == 0 )
-        mrJob.startJob( cluster, paramJobMap.inverse().get( mrJob ).source );
+        mrJob.startJob( cluster, workloadParams.sources.get( getJobParamsFor( mrJob ) ) );
       else
-        mrJob.blockOnPredecessors( cluster, predecessors );
+        mrJob.startJobAfterPredecessors( cluster, predecessors );
       }
+    }
+
+  private MRJobParams getJobParamsFor( MRJob mrJob )
+    {
+    return paramJobMap.inverse().get( mrJob );
     }
   }

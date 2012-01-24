@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -30,9 +30,9 @@ public class Dump
     MRJobParams mrParamsEnd = new MRJobParams( 1001, 1001 );
     MRJobParams mrParamsIncrement = new MRJobParams( 5, 5 );
 
-    mrParamsStart.source.add( new DistributedData( 1 * 1024 * 1024 ) );
-    mrParamsEnd.source.add( new DistributedData( 1 * 1024 * 1024 ) );
-    mrParamsIncrement.source.add( new DistributedData( 1 * 1024 ) );
+    mrParamsStart.sources.add( new DistributedData( 1 * 1024 * 1024 ) );
+    mrParamsEnd.sources.add( new DistributedData( 1 * 1024 * 1024 ) );
+    mrParamsIncrement.sources.add( new DistributedData( 1 * 1024 ) );
 
     WorkloadParams start = new WorkloadParams( mrParamsStart );
     WorkloadParams end = new WorkloadParams( mrParamsEnd );

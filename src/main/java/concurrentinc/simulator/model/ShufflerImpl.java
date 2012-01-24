@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -23,9 +23,9 @@ public class ShufflerImpl implements Shuffler
   private float sortFactor = 1024; // Mb / sec
   private long sortBlockSizeMb;
   private long numMappers;
-  private long sizeMb;
+  private double sizeMb;
 
-  public ShufflerImpl( long sortBlockSizeMb, long numMappers, long sizeMb )
+  public ShufflerImpl( long sortBlockSizeMb, long numMappers, double sizeMb )
     {
     this.sortBlockSizeMb = sortBlockSizeMb;
     this.numMappers = numMappers;

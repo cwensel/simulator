@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -13,13 +13,13 @@ public class MapperParams extends TaskParams
   {
   public MapperParams( int requestedNumProcesses )
     {
-    this.requestedNumProcesses = requestedNumProcesses;
+    this.setRequestedNumProcesses( requestedNumProcesses );
     }
 
   public MapperParams( int requestedNumProcesses, float dataFactor, float processingThroughput )
     {
-    this.requestedNumProcesses = requestedNumProcesses;
-    this.processingThroughput = processingThroughput;
-    this.dataFactor = dataFactor;
+    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setProcessingThroughput( processingThroughput );
+    this.setDataFactor( dataFactor );
     }
   }

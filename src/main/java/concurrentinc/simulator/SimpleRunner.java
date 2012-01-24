@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -42,13 +42,13 @@ public class SimpleRunner
 
     for( double inputSizeMb = start.getInputSizeMB(); inputSizeMb <= end.getInputSizeMB(); inputSizeMb += increment.getInputSizeMB() )
       {
-      for( float mapperDataFactor = start.getMapperParams().dataFactor; mapperDataFactor <= end.getMapperParams().dataFactor; mapperDataFactor += increment.getMapperParams().dataFactor )
+      for( float mapperDataFactor = start.getMapperParams().getDataFactor(); mapperDataFactor <= end.getMapperParams().getDataFactor(); mapperDataFactor += increment.getMapperParams().getDataFactor() )
         {
-        for( float reducerDataFactor = start.getReducerParams().dataFactor; reducerDataFactor <= end.getReducerParams().dataFactor; reducerDataFactor += increment.getReducerParams().dataFactor )
+        for( float reducerDataFactor = start.getReducerParams().getDataFactor(); reducerDataFactor <= end.getReducerParams().getDataFactor(); reducerDataFactor += increment.getReducerParams().getDataFactor() )
           {
-          for( int numMappers = start.getMapperParams().requestedNumProcesses; numMappers <= end.getMapperParams().requestedNumProcesses; numMappers += increment.getMapperParams().requestedNumProcesses )
+          for( int numMappers = start.getMapperParams().getRequestedNumProcesses(); numMappers <= end.getMapperParams().getRequestedNumProcesses(); numMappers += increment.getMapperParams().getRequestedNumProcesses() )
             {
-            for( int numReducers = start.getReducerParams().requestedNumProcesses; numReducers <= end.getReducerParams().requestedNumProcesses; numReducers += increment.getReducerParams().requestedNumProcesses )
+            for( int numReducers = start.getReducerParams().getRequestedNumProcesses(); numReducers <= end.getReducerParams().getRequestedNumProcesses(); numReducers += increment.getReducerParams().getRequestedNumProcesses() )
               {
               if( !first && sample != 1.0 && random.nextFloat() > sample )
                 continue;
@@ -69,7 +69,7 @@ public class SimpleRunner
   private boolean run( PrintWriter writer, boolean printFields, double inputSizeMb, int numMappers, int numReducers ) throws ExecutionException, InterruptedException, SimulationException
     {
     MRJobParams mrJobParams = new MRJobParams( numMappers, numReducers );
-    mrJobParams.source.add( new DistributedData( inputSizeMb ) );
+    mrJobParams.sources.add( new DistributedData( inputSizeMb ) );
     WorkloadParams workloadParams = new WorkloadParams( mrJobParams );
 
     JobSimulationRunner runner = new JobSimulationRunner( workloadParams );

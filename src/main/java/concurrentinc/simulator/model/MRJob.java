@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -20,7 +20,7 @@ public interface MRJob
   void startJob( Cluster cluster, List<DistributedData> inputData );
 
   @Continuable
-  void blockOnPredecessors( Cluster cluster, List<MRJob> predecessors );
+  void startJobAfterPredecessors( Cluster cluster, List<MRJob> predecessors );
 
   @Blocking
   void blockTillComplete();

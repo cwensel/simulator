@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -22,7 +22,7 @@ public class SimpleTest extends TestCase
   public void testShortJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 1, 1 );
-    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams );
 
@@ -41,7 +41,7 @@ public class SimpleTest extends TestCase
   public void testSimpleJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 100, 100 );
-    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams );
 
@@ -54,13 +54,13 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT4M35.551S", jobRun.getDuration().toString() );
+    assertEquals( "PT4M35.563S", jobRun.getDuration().toString() );
     }
 
   public void testChainedJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 100, 100 );
-    mrJobParams.source.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams, new MRJobParams( 100, 100 ) );
 
@@ -73,6 +73,6 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT4M35.551S", jobRun.getDuration().toString() );
+    assertEquals( "PT8M46.550S", jobRun.getDuration().toString() );
     }
   }

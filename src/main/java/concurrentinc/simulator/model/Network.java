@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -14,8 +14,8 @@ import com.hellblazer.primeMover.Blocking;
 public interface Network
   {
   @Blocking
-  void read( long sizeMb );
+  void read( double sizeMb );
 
   @Blocking
-  void write( long sizeMB );
+  void write( double sizeMB );
   }

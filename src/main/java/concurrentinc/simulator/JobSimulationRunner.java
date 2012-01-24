@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -90,7 +90,7 @@ public class JobSimulationRunner
     return Seconds.secondsBetween( getStartTime(), getEndTime() );
     }
 
-  public void run( ClusterParams clusterParams ) throws ExecutionException, InterruptedException, SimulationException
+  public WorkloadParams run( ClusterParams clusterParams ) throws ExecutionException, InterruptedException, SimulationException
     {
     LOG.debug( "starting cluster simulation" );
     SimulationController controller = new SimulationController();
@@ -112,7 +112,10 @@ public class JobSimulationRunner
     setEndTime( new Instant( controller.getSimulationEnd() ) );
 
     LOG.debug( "ended cluster simulation" );
+
+    return ( (WorkloadImpl) workload ).getResultWorkloadParams();
     }
+
 
   public String print()
     {
@@ -123,4 +126,5 @@ public class JobSimulationRunner
     {
     return Printer.printFields( RunResults.class );
     }
+
   }

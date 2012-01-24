@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
 
 package concurrentinc.simulator.model;
 
+import java.util.Collection;
 import java.util.List;
 
 import concurrentinc.simulator.util.PrintableImpl;
@@ -20,6 +21,7 @@ public class DistributedData extends PrintableImpl
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
   public double sizeMb;
+  public int numBlocks;
   public double blockSizeMb = 128;
   public int fileReplication = 3;
 
@@ -28,15 +30,19 @@ public class DistributedData extends PrintableImpl
     this.sizeMb = sizeMb;
     }
 
-  public DistributedData( double sizeMb, double blockSizeMb, int fileReplication )
+  public DistributedData( double sizeMb, int numBlocks, double blockSizeMb, int fileReplication )
     {
     this.sizeMb = sizeMb;
+    this.numBlocks = numBlocks;
     this.blockSizeMb = blockSizeMb;
     this.fileReplication = fileReplication;
     }
 
   public int getNumBlocks()
     {
+    if( numBlocks != 0 )
+      return numBlocks;
+
     return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
     }
 
@@ -45,12 +51,12 @@ public class DistributedData extends PrintableImpl
     return getNumBlocks() * fileReplication;
     }
 
-  public void read( Network network, long amountMb, int runningJobMapProcesses )
+  public void read( Network network, double amountMb, int runningJobMapProcesses )
     {
-    double readingBlocks = Math.ceil( amountMb / blockSizeMb );
-
-    if( readingBlocks > 1 )
-      throw new IllegalStateException( "cannot read more than one block for now" );
+//    double readingBlocks = Math.ceil( amountMb / blockSizeMb );
+//
+//    if( readingBlocks > 1 )
+//      throw new IllegalStateException( "cannot read more than one block for now" );
 
     int numReplicatedBlocks = getNumReplicatedBlocks();
 
@@ -64,16 +70,16 @@ public class DistributedData extends PrintableImpl
     network.read( amountMb );
     }
 
-  public void write( Network network, long amountMb )
+  public void write( Network network, double amountMb )
     {
-    long writingAmount = amountMb * fileReplication;
+    double writingAmount = amountMb * fileReplication;
 
     LOG.debug( "writing amount to network = {}", writingAmount );
 
     network.write( writingAmount );
     }
 
-  public static double totalDataSize( List<DistributedData> distributedData )
+  public static double totalDataSize( Collection<DistributedData> distributedData )
     {
     double total = 0;
 

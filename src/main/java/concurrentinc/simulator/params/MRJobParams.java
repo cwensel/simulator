@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -20,7 +20,7 @@ public class MRJobParams extends PrintableImpl
   public double blockSizeMb = 128;
   public int fileReplication = 3;
 
-  public List<DistributedData> source = new ArrayList<DistributedData>();
+  public List<DistributedData> sources = new ArrayList<DistributedData>();
   public List<DistributedData> sinks = new ArrayList<DistributedData>();
 
   public MapperParams mapper;
@@ -36,6 +36,15 @@ public class MRJobParams extends PrintableImpl
     {
     this.mapper = new MapperParams( numProcessesMapper, dataFactorMapper, processingBandwidthMapper );
     this.reducer = new ReducerParams( numProcessesReducer, dataFactorReducer, processingBandwidthReducer );
+    }
+
+  public MRJobParams( int numProcessesMapper, float dataFactorMapper, float processingBandwidthMapper, int numProcessesReducer, float dataFactorReducer, float processingBandwidthReducer, List<DistributedData> sources, List<DistributedData> sinks )
+    {
+    this.mapper = new MapperParams( numProcessesMapper, dataFactorMapper, processingBandwidthMapper );
+    this.reducer = new ReducerParams( numProcessesReducer, dataFactorReducer, processingBandwidthReducer );
+
+    this.sources.addAll( sources );
+    this.sinks.addAll( sinks );
     }
 
   public MRJobParams( int numProcessesMapper, int numProcessesReducer )

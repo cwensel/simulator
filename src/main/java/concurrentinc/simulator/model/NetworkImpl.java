@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -31,7 +31,7 @@ public class NetworkImpl implements Network
     this.networkParams = networkParams;
     }
 
-  public void read( long sizeMb )
+  public void read( double sizeMb )
     {
     long readSleepMs = (long) ( sizeMb / networkParams.getEffectiveReadMbS() * 1000 );
 
@@ -40,7 +40,7 @@ public class NetworkImpl implements Network
     Kronos.blockingSleep( readSleepMs );
     }
 
-  public void write( long sizeMB )
+  public void write( double sizeMB )
     {
     long writeSleepMs = (long) ( sizeMB / networkParams.getEffectiveWriteMbS() * 1000 );
 

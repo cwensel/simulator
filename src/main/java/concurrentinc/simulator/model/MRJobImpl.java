@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -32,6 +32,10 @@ public class MRJobImpl implements MRJob
 
   private Set<MapProcess> mapProcesses;
   private Set<ReduceProcess> reduceProcesses;
+
+  private Set<MapProcess> completedMapProcesses;
+  private Set<ReduceProcess> completedReduceProcesses;
+
   private Cluster cluster;
   private List<DistributedData> inputData;
   private SynchronousQueue<String> channel;
@@ -41,6 +45,15 @@ public class MRJobImpl implements MRJob
   public MRJobImpl( MRJobParams mrJobParams )
     {
     this.mrJobParams = mrJobParams;
+    }
+
+  public MRJobParams getResultMRJobParams()
+    {
+    int mappers = completedMapProcesses.size();
+    int reducers = completedReduceProcesses.size();
+
+    // return updated values
+    return new MRJobParams( mappers, mrJobParams.mapper.getDataFactor(), mrJobParams.mapper.getProcessingThroughput(), reducers, mrJobParams.reducer.getDataFactor(), mrJobParams.reducer.getProcessingThroughput(), inputData, getOutputData() );
     }
 
   private double getBlockSizeMb()
@@ -53,24 +66,27 @@ public class MRJobImpl implements MRJob
     return mrJobParams.fileReplication;
     }
 
-  private int getOutputSizeMb()
+  private double getOutputSizeMb()
     {
-    return (int) ( mrJobParams.reducer.dataFactor * getShuffleSizeMb() );
+    return mrJobParams.reducer.getDataFactor() * getShuffleSizeMb();
     }
 
-  private int getShuffleSizeMb()
+  private double getShuffleSizeMb()
     {
-    return (int) ( mrJobParams.mapper.dataFactor * getInputSizeMB() );
+    return mrJobParams.mapper.getDataFactor() * getInputSizeMB();
     }
 
   private List<DistributedData> getOutputData()
     {
     List<DistributedData> output = new ArrayList<DistributedData>();
 
-    Set processes = reduceProcesses;
+    Set processes = completedReduceProcesses;
 
-    if( reduceProcesses.isEmpty() )
-      processes = mapProcesses;
+    if( processes.isEmpty() )
+      processes = completedMapProcesses;
+
+    if( processes.isEmpty() )
+      throw new IllegalStateException( "no map or reduce processes completed" );
 
     for( Object taskProcess : processes )
       output.add( ( (TaskProcess) taskProcess ).getOutputData() );
@@ -102,12 +118,12 @@ public class MRJobImpl implements MRJob
 
   int getMinNumMappers()
     {
-    return mrJobParams.mapper.requestedNumProcesses;
+    return mrJobParams.mapper.getRequestedNumProcesses();
     }
 
   int getNumReducers()
     {
-    return mrJobParams.reducer.requestedNumProcesses;
+    return mrJobParams.reducer.getRequestedNumProcesses();
     }
 
   List<DistributedData> getInputData()
@@ -125,9 +141,9 @@ public class MRJobImpl implements MRJob
     }
 
   @Override
-  public void blockOnPredecessors( Cluster cluster, List<MRJob> predecessors )
+  public void startJobAfterPredecessors( Cluster cluster, List<MRJob> predecessors )
     {
-    LOG.info( "blocking on predecessors: {}", this );
+    LOG.info( "blocking on num predecessors: {}, {}", predecessors.size(), this );
     this.cluster = cluster;
 
     for( MRJob predecessor : predecessors )
@@ -136,13 +152,25 @@ public class MRJobImpl implements MRJob
       predecessor.blockTillComplete();
       }
 
+    inputData = getPredecessorOutput( predecessors );
+
+    if( inputData.size() == 0 )
+      throw new IllegalStateException( "no input data received from predecessors" );
+
+    LOG.info( "incoming data: {}", inputData.size() );
+
+    LOG.info( "starting job: {}", this );
+    startMaps();
+    }
+
+  private List<DistributedData> getPredecessorOutput( List<MRJob> predecessors )
+    {
     List<DistributedData> temp = new ArrayList<DistributedData>();
 
     for( MRJob predecessor : predecessors )
       temp.addAll( ( (MRJobImpl) predecessor ).getOutputData() );
 
-    inputData = temp;
-    startMaps();
+    return temp;
     }
 
   @Blocking
@@ -177,38 +205,76 @@ public class MRJobImpl implements MRJob
 
   private Collection<MapProcess> getMapProcesses()
     {
+    LOG.info( "input data size(): {}", inputData.size() );
+
     mapProcesses = new HashSet<MapProcess>();
+    completedMapProcesses = new HashSet<MapProcess>();
 
-    DistributedData data = new DistributedData( getInputSizeMB(), getBlockSizeMb(), getFileReplication() );
+    int minMappers = getMinNumMappers();
+    long numBlocks = getNumBlocks();
 
-    double remainingSize = getInputSizeMB();
-    int splitSize = computeSplitSizeMb();
+    long numMappers = Math.max( minMappers, numBlocks );
+    double mappersPerBlock = numMappers / numBlocks;
 
-    for( int i = 0; i < getNumMappers(); i++ )
+    LOG.info( "num mappers: {}", numMappers );
+    LOG.info( "mappers per block: {}", mappersPerBlock );
+
+    for( DistributedData data : inputData )
       {
-      long toProcess = (long) Math.min( splitSize, remainingSize );
-      Mapper mapper = new MapperImpl( data, mrJobParams.mapper.processingThroughput, toProcess );
-      mapProcesses.add( new MapProcessImpl( this, mapper ) );
+      double remainder = data.sizeMb;
+      double minSplitSize = data.blockSizeMb / mappersPerBlock;
 
-      remainingSize -= toProcess;
+      LOG.debug( "max split size: {}", minSplitSize );
+
+      while( remainder / minSplitSize > 1.1 )
+        {
+        double splitSize = Math.min( minSplitSize, remainder );
+
+        mapProcesses.add( makeMapProcess( data, splitSize ) );
+
+        remainder -= splitSize;
+        }
+
+      if( remainder > 0 )
+        mapProcesses.add( makeMapProcess( data, remainder ) );
+
       }
 
     return mapProcesses;
     }
 
+  private MapProcessImpl makeMapProcess( DistributedData data, double splitSize )
+    {
+    DistributedData output = new DistributedData( mrJobParams.mapper.getDataFactor() * splitSize, 0, getBlockSizeMb(), getFileReplication() );
+    // we pass data instance in so we can block on it being read by multiple processes
+    Mapper mapper = new MapperImpl( data, splitSize, mrJobParams.mapper.getProcessingThroughput(), output );
+    return new MapProcessImpl( this, mapper );
+    }
+
   private Collection<ReduceProcess> getReduceProcesses()
     {
     reduceProcesses = new HashSet<ReduceProcess>();
+    completedReduceProcesses = new HashSet<ReduceProcess>();
 
-    long toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
-    long toWrite = getOutputSizeMb() / getNumReducers();
+    LOG.info( "num reducers: {}", getNumReducers() );
+    LOG.info( "shuffle size: {}", getShuffleSizeMb() );
+    LOG.info( "output size: {}", getOutputSizeMb() );
 
-    DistributedData data = new DistributedData( toWrite, getBlockSizeMb(), getFileReplication() );
+    double toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
+    double toWrite = getOutputSizeMb() / getNumReducers();
+
+    LOG.info( "sort each to process: {}", toProcess );
+    LOG.info( "reducer each to write: {}", toWrite );
+
+    DistributedData data = new DistributedData( toWrite, 0, getBlockSizeMb(), getFileReplication() );
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
-      Shuffler shuffler = new ShufflerImpl( mrJobParams.reducer.sortBlockSizeMb, getNumMappers(), toProcess );
-      Reducer reducer = new ReducerImpl( data, mrJobParams.reducer.processingThroughput, toProcess, toWrite );
+      Shuffler shuffler = new ShufflerImpl( mrJobParams.reducer.getSortBlockSizeMb(), getNumMappers(), toProcess );
+
+      DistributedData output = new DistributedData( mrJobParams.reducer.getDataFactor() * toWrite, 0, getBlockSizeMb(), getFileReplication() );
+      Reducer reducer = new ReducerImpl( data, mrJobParams.reducer.getProcessingThroughput(), toProcess, output );
+
       reduceProcesses.add( new ReduceProcessImpl( this, shuffler, reducer ) );
       }
 
@@ -220,6 +286,8 @@ public class MRJobImpl implements MRJob
     {
     if( !mapProcesses.remove( mapProcess ) )
       throw new IllegalStateException( "map process not queued, current running: " + runningMapProcesses );
+
+    completedMapProcesses.add( mapProcess );
 
     runningMapProcesses--;
 
@@ -234,6 +302,8 @@ public class MRJobImpl implements MRJob
     {
     if( !reduceProcesses.remove( reduceProcess ) )
       throw new IllegalStateException( "reduce process not queued, current running: " + runningReduceProcesses );
+
+    completedReduceProcesses.add( reduceProcess );
 
     runningReduceProcesses--;
 

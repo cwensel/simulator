@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -20,34 +20,34 @@ public class ReducerImpl implements Reducer
   {
   private static final Logger LOG = LoggerFactory.getLogger( ReducerImpl.class );
 
-  private DistributedData data;
+  private DistributedData inputData;
   private float processingFactor;
-  private long processSizeMb;
-  private long outputSizeMb;
+  private double processSizeMb;
+  private final DistributedData outputData;
 
-  public ReducerImpl( DistributedData data, float processingFactor, long processSizeMb, long outputSizeMb )
+  public ReducerImpl( DistributedData inputData, float processingFactor, double processSizeMb, DistributedData outputData )
     {
-    this.data = data;
+    this.inputData = inputData;
     this.processingFactor = processingFactor;
     this.processSizeMb = processSizeMb;
-    this.outputSizeMb = outputSizeMb;
+    this.outputData = outputData;
     }
 
   public DistributedData getOutputData()
     {
-    return data;
+    return outputData;
     }
 
   @Blocking
   public void execute( Network network )
     {
-    float reducerSleep = processSizeMb / processingFactor * 1000;
+    long reducerSleep = (long) ( processSizeMb / processingFactor * 1000 );
 
     LOG.debug( "reducerSleep = {}", reducerSleep );
 
     Kronos.blockingSleep( (long) reducerSleep );
 
-    data.write( network, outputSizeMb );
+    inputData.write( network, outputData.sizeMb );
     }
 
   }

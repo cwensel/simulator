@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -20,28 +20,30 @@ public class MapperImpl implements Mapper
   {
   private static final Logger LOG = LoggerFactory.getLogger( MapperImpl.class );
 
-  private DistributedData data;
+  private DistributedData inputData;
+  private final double splitSize;
+  private DistributedData outputData;
   private float processingFactor;
-  private long allocatedSizeMb;
 
-  public MapperImpl( DistributedData data, float processingFactor, long allocatedSizeMb )
+  public MapperImpl( DistributedData inputData, double splitSize, float processingFactor, DistributedData outputData )
     {
-    this.data = data;
+    this.inputData = inputData;
+    this.splitSize = splitSize;
     this.processingFactor = processingFactor;
-    this.allocatedSizeMb = allocatedSizeMb;
+    this.outputData = outputData;
     }
 
   public DistributedData getOutputData()
     {
-    return data;
+    return outputData;
     }
 
   @Blocking
   public void execute( Network network, int runningMapProcesses )
     {
-    data.read( network, allocatedSizeMb, runningMapProcesses );
+    inputData.read( network, splitSize, runningMapProcesses );
 
-    float mapperSleep = allocatedSizeMb / processingFactor * 1000;
+    double mapperSleep = splitSize / processingFactor * 1000;
 
     LOG.debug( "mapperSleep = {}", mapperSleep );
 
