@@ -22,6 +22,7 @@ public class WorkloadParams extends PrintableImpl
   {
   public MRJobParamsGraph mrParams;
   public Map<MRJobParams, List<DistributedData>> sources;
+  public Map<MRJobParams, List<DistributedData>> sinks;
 
   public WorkloadParams( MRJobParams... mrJobParams )
     {
@@ -33,15 +34,35 @@ public class WorkloadParams extends PrintableImpl
     this.mrParams = mrParams;
     this.sources = new HashMap<MRJobParams, List<DistributedData>>();
 
-    for( MRJobParams mrJobParams : mrParams.getOrigins() )
+    for( MRJobParams mrJobParams : mrParams.getHeads() )
       this.sources.put( mrJobParams, mrJobParams.sources );
+
+    this.sinks = new HashMap<MRJobParams, List<DistributedData>>();
+
+    for( MRJobParams mrJobParams : mrParams.getTails() )
+      this.sinks.put( mrJobParams, mrJobParams.sinks );
     }
 
-  public WorkloadParams( MRJobParamsGraph mrParams, Map<MRJobParams, List<DistributedData>> sources )
+  public double getSourceSizeMB()
     {
-    this.mrParams = mrParams;
-    this.sources = sources;
+    Set<DistributedData> sourceSet = new HashSet<DistributedData>();
+
+    for( List<DistributedData> datas : sources.values() )
+      sourceSet.addAll( datas );
+
+    return DistributedData.totalDataSizeMB( sourceSet );
     }
+
+  public double getSinkSizeMB()
+    {
+    Set<DistributedData> sourceSet = new HashSet<DistributedData>();
+
+    for( List<DistributedData> datas : sinks.values() )
+      sourceSet.addAll( datas );
+
+    return DistributedData.totalDataSizeMB( sourceSet );
+    }
+
 
   /*
    * use for testing
@@ -49,22 +70,12 @@ public class WorkloadParams extends PrintableImpl
 
   public MRJobParams getMRParams()
     {
-    List<MRJobParams> origins = mrParams.getOrigins();
+    List<MRJobParams> origins = mrParams.getHeads();
 
     if( origins.size() != 1 )
       throw new IllegalStateException( "too many origins, found: " + origins.size() );
 
     return origins.get( 0 );
-    }
-
-  public double getInputSizeMB()
-    {
-    Set<DistributedData> sourceSet = new HashSet<DistributedData>();
-
-    for( List<DistributedData> datas : sources.values() )
-      sourceSet.addAll( datas );
-
-    return DistributedData.totalDataSize( sourceSet );
     }
 
   public MapperParams getMapperParams()

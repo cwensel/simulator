@@ -15,19 +15,19 @@ public class ReducerParams extends TaskParams
 
   public ReducerParams( int requestedNumProcesses )
     {
-    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setNumTaskProcesses( requestedNumProcesses );
     }
 
   public ReducerParams( int requestedNumProcesses, float dataFactor, float processingThroughput )
     {
-    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setNumTaskProcesses( requestedNumProcesses );
     this.setProcessingThroughput( processingThroughput );
     this.setDataFactor( dataFactor );
     }
 
   public ReducerParams( int requestedNumProcesses, float processingThroughput, float dataFactor, long sortBlockSizeMb )
     {
-    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setNumTaskProcesses( requestedNumProcesses );
     this.setProcessingThroughput( processingThroughput );
     this.setDataFactor( dataFactor );
     this.setSortBlockSizeMb( sortBlockSizeMb );

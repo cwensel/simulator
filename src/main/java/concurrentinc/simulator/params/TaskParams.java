@@ -13,18 +13,18 @@ import concurrentinc.simulator.util.PrintableImpl;
  */
 public class TaskParams extends PrintableImpl
   {
-  private int requestedNumProcesses = 1; // requested num processes
+  private int numTaskProcesses = 1; // requested num processes
   private float dataFactor = 1.0f; // does it create or destroy data
   private float processingThroughput = 100; // Mb /sec processing bandwidth
 
-  public int getRequestedNumProcesses()
+  public int getNumTaskProcesses()
     {
-    return requestedNumProcesses;
+    return numTaskProcesses;
     }
 
-  public void setRequestedNumProcesses( int requestedNumProcesses )
+  public void setNumTaskProcesses( int numTaskProcesses )
     {
-    this.requestedNumProcesses = requestedNumProcesses;
+    this.numTaskProcesses = numTaskProcesses;
     }
 
   public float getDataFactor()

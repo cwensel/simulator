@@ -40,15 +40,15 @@ public class SimpleRunner
     Random random = new Random();
     boolean first = true;
 
-    for( double inputSizeMb = start.getInputSizeMB(); inputSizeMb <= end.getInputSizeMB(); inputSizeMb += increment.getInputSizeMB() )
+    for( double inputSizeMb = start.getSourceSizeMB(); inputSizeMb <= end.getSourceSizeMB(); inputSizeMb += increment.getSourceSizeMB() )
       {
       for( float mapperDataFactor = start.getMapperParams().getDataFactor(); mapperDataFactor <= end.getMapperParams().getDataFactor(); mapperDataFactor += increment.getMapperParams().getDataFactor() )
         {
         for( float reducerDataFactor = start.getReducerParams().getDataFactor(); reducerDataFactor <= end.getReducerParams().getDataFactor(); reducerDataFactor += increment.getReducerParams().getDataFactor() )
           {
-          for( int numMappers = start.getMapperParams().getRequestedNumProcesses(); numMappers <= end.getMapperParams().getRequestedNumProcesses(); numMappers += increment.getMapperParams().getRequestedNumProcesses() )
+          for( int numMappers = start.getMapperParams().getNumTaskProcesses(); numMappers <= end.getMapperParams().getNumTaskProcesses(); numMappers += increment.getMapperParams().getNumTaskProcesses() )
             {
-            for( int numReducers = start.getReducerParams().getRequestedNumProcesses(); numReducers <= end.getReducerParams().getRequestedNumProcesses(); numReducers += increment.getReducerParams().getRequestedNumProcesses() )
+            for( int numReducers = start.getReducerParams().getNumTaskProcesses(); numReducers <= end.getReducerParams().getNumTaskProcesses(); numReducers += increment.getReducerParams().getNumTaskProcesses() )
               {
               if( !first && sample != 1.0 && random.nextFloat() > sample )
                 continue;

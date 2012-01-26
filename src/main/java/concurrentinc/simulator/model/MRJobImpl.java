@@ -96,7 +96,7 @@ public class MRJobImpl implements MRJob
 
   private double getInputSizeMB()
     {
-    return DistributedData.totalDataSize( inputData );
+    return DistributedData.totalDataSizeMB( inputData );
     }
 
   long getNumMappers()
@@ -118,12 +118,12 @@ public class MRJobImpl implements MRJob
 
   int getMinNumMappers()
     {
-    return mrJobParams.mapper.getRequestedNumProcesses();
+    return mrJobParams.mapper.getNumTaskProcesses();
     }
 
   int getNumReducers()
     {
-    return mrJobParams.reducer.getRequestedNumProcesses();
+    return mrJobParams.reducer.getNumTaskProcesses();
     }
 
   List<DistributedData> getInputData()

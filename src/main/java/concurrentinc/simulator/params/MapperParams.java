@@ -11,14 +11,14 @@ package concurrentinc.simulator.params;
  */
 public class MapperParams extends TaskParams
   {
-  public MapperParams( int requestedNumProcesses )
+  public MapperParams( int numTaskProcesses )
     {
-    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setNumTaskProcesses( numTaskProcesses );
     }
 
-  public MapperParams( int requestedNumProcesses, float dataFactor, float processingThroughput )
+  public MapperParams( int numTaskProcesses, float dataFactor, float processingThroughput )
     {
-    this.setRequestedNumProcesses( requestedNumProcesses );
+    this.setNumTaskProcesses( numTaskProcesses );
     this.setProcessingThroughput( processingThroughput );
     this.setDataFactor( dataFactor );
     }

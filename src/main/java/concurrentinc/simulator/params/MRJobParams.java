@@ -52,4 +52,14 @@ public class MRJobParams extends PrintableImpl
     this.mapper = new MapperParams( numProcessesMapper );
     this.reducer = new ReducerParams( numProcessesReducer );
     }
+
+  public double getTotalSourceMB()
+    {
+    return DistributedData.totalDataSizeMB( sources );
+    }
+
+  public double getTotalSinkMB()
+    {
+    return DistributedData.totalDataSizeMB( sinks );
+    }
   }

@@ -62,7 +62,7 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
     return new TopologicalOrderIterator<MRJobParams, Integer>( this );
     }
 
-  public List<MRJobParams> getOrigins()
+  public List<MRJobParams> getHeads()
     {
     List<MRJobParams> list = new ArrayList<MRJobParams>();
     Iterator<MRJobParams> iterator = getTopologicalIterator();
@@ -72,7 +72,25 @@ public class MRJobParamsGraph extends SimpleDirectedGraph<MRJobParams, Integer> 
       MRJobParams params = iterator.next();
 
       if( inDegreeOf( params ) != 0 )
-        break;
+        continue;
+
+      list.add( params );
+      }
+
+    return list;
+    }
+
+  public List<MRJobParams> getTails()
+    {
+    List<MRJobParams> list = new ArrayList<MRJobParams>();
+    Iterator<MRJobParams> iterator = getTopologicalIterator();
+
+    while( iterator.hasNext() )
+      {
+      MRJobParams params = iterator.next();
+
+      if( outDegreeOf( params ) != 0 )
+        continue;
 
       list.add( params );
       }

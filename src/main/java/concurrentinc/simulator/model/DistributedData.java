@@ -79,7 +79,7 @@ public class DistributedData extends PrintableImpl
     network.write( writingAmount );
     }
 
-  public static double totalDataSize( Collection<DistributedData> distributedData )
+  public static double totalDataSizeMB( Collection<DistributedData> distributedData )
     {
     double total = 0;
 
