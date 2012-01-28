@@ -11,9 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.measure.quantity.DataAmount;
 
 import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.util.PrintableImpl;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -43,24 +45,24 @@ public class WorkloadParams extends PrintableImpl
       this.sinks.put( mrJobParams, mrJobParams.sinks );
     }
 
-  public double getSourceSizeMB()
+  public Amount<DataAmount> getSourceSize()
     {
     Set<DistributedData> sourceSet = new HashSet<DistributedData>();
 
     for( List<DistributedData> datas : sources.values() )
       sourceSet.addAll( datas );
 
-    return DistributedData.totalDataSizeMB( sourceSet );
+    return DistributedData.totalDataSize( sourceSet );
     }
 
-  public double getSinkSizeMB()
+  public Amount<DataAmount> getSinkSize()
     {
     Set<DistributedData> sourceSet = new HashSet<DistributedData>();
 
     for( List<DistributedData> datas : sinks.values() )
       sourceSet.addAll( datas );
 
-    return DistributedData.totalDataSizeMB( sourceSet );
+    return DistributedData.totalDataSize( sourceSet );
     }
 
 

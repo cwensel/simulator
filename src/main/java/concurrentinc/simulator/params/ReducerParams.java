@@ -6,12 +6,18 @@
 
 package concurrentinc.simulator.params;
 
+import javax.measure.quantity.DataAmount;
+
+import org.jscience.physics.amount.Amount;
+
+import static concurrentinc.simulator.model.Bandwidth.MB;
+
 /**
  *
  */
 public class ReducerParams extends TaskParams
   {
-  private long sortBlockSizeMb = 100;
+  private Amount<DataAmount> sortBlockSize = Amount.valueOf( 100, MB );
 
   public ReducerParams( int requestedNumProcesses )
     {
@@ -25,24 +31,24 @@ public class ReducerParams extends TaskParams
     this.setDataFactor( dataFactor );
     }
 
-  public ReducerParams( int requestedNumProcesses, float processingThroughput, float dataFactor, long sortBlockSizeMb )
+  public ReducerParams( int requestedNumProcesses, float processingThroughput, float dataFactor, Amount<DataAmount> sortBlockSize )
     {
     this.setNumTaskProcesses( requestedNumProcesses );
     this.setProcessingThroughput( processingThroughput );
     this.setDataFactor( dataFactor );
-    this.setSortBlockSizeMb( sortBlockSizeMb );
+    this.setSortBlockSize( sortBlockSize );
     }
 
-  public long getSortBlockSizeMb()
+  public Amount<DataAmount> getSortBlockSize()
     {
-    return sortBlockSizeMb;
+    return sortBlockSize;
     }
 
-  public void setSortBlockSizeMb( long sortBlockSizeMb )
+  public void setSortBlockSize( Amount<DataAmount> sortBlockSize )
     {
-    if( sortBlockSizeMb == 0 )
+    if( sortBlockSize.getExactValue() == 0 )
       throw new IllegalArgumentException( "sort block size may not be zero" );
 
-    this.sortBlockSizeMb = sortBlockSizeMb;
+    this.sortBlockSize = sortBlockSize;
     }
   }

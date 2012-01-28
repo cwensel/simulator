@@ -63,6 +63,7 @@ public class JsonPrinter
     serializers = new SimpleSerializers();
 
     serializers.addSerializer( new WorkloadSerializer() );
+    serializers.addSerializer( new AmountSerializer() );
 
     module.setSerializers( serializers );
 

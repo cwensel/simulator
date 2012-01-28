@@ -93,6 +93,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jscience</groupId>
+      <artifactId>jscience</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.2</version>
@@ -110,6 +116,24 @@
       <id>conjars</id>
       <url>http://conjars.org/repo/</url>
     </repository>
+
+    <repository>
+      <id>eclipse-public</id>
+      <name>Public Eclipse.org Nexus</name>
+      <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
+    </repository>
+
+    <repository>
+      <id>eclipse-central</id>
+      <name>Central Eclipse.org Nexus</name>
+      <url>http://maven.eclipse.org/nexus/content/groups/central/</url>
+    </repository>
+
+    <repository>
+      <id>jcurl</id>
+      <url>http://www.jcurl.org/m2/repo/</url>
+    </repository>
+
   </repositories>
 
   <licenses>

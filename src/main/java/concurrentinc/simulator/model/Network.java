@@ -6,7 +6,10 @@
 
 package concurrentinc.simulator.model;
 
+import javax.measure.quantity.DataAmount;
+
 import com.hellblazer.primeMover.Blocking;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -14,8 +17,8 @@ import com.hellblazer.primeMover.Blocking;
 public interface Network
   {
   @Blocking
-  void read( double sizeMb );
+  void read( Amount<DataAmount> size );
 
   @Blocking
-  void write( double sizeMB );
+  void write( Amount<DataAmount> size );
   }

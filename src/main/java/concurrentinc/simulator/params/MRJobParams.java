@@ -8,16 +8,20 @@ package concurrentinc.simulator.params;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.measure.quantity.DataAmount;
 
 import concurrentinc.simulator.model.DistributedData;
 import concurrentinc.simulator.util.PrintableImpl;
+import org.jscience.physics.amount.Amount;
+
+import static concurrentinc.simulator.model.Bandwidth.MB;
 
 /**
  *
  */
 public class MRJobParams extends PrintableImpl
   {
-  public double blockSizeMb = 128;
+  public Amount<DataAmount> blockSize = Amount.valueOf( 128, MB );
   public int fileReplication = 3;
 
   public List<DistributedData> sources = new ArrayList<DistributedData>();
@@ -53,13 +57,13 @@ public class MRJobParams extends PrintableImpl
     this.reducer = new ReducerParams( numProcessesReducer );
     }
 
-  public double getTotalSourceMB()
+  public Amount<DataAmount> getTotalSource()
     {
-    return DistributedData.totalDataSizeMB( sources );
+    return DistributedData.totalDataSize( sources );
     }
 
-  public double getTotalSinkMB()
+  public Amount<DataAmount> getTotalSink()
     {
-    return DistributedData.totalDataSizeMB( sinks );
+    return DistributedData.totalDataSize( sinks );
     }
   }

@@ -6,9 +6,14 @@
 
 package concurrentinc.simulator.model;
 
+import javax.measure.quantity.DataAmount;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.SI;
+
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
 import concurrentinc.simulator.params.NetworkParams;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,18 +36,22 @@ public class NetworkImpl implements Network
     this.networkParams = networkParams;
     }
 
-  public void read( double sizeMb )
+  public void read( Amount<DataAmount> size )
     {
-    long readSleepMs = (long) ( sizeMb / networkParams.getEffectiveReadMbS() * 1000 );
+    Amount<? extends Quantity> amount = size.to( SI.BIT ).divide( networkParams.getEffectiveReadRate().to( SI.BIT.divide( SI.SECOND ) ) );
+
+    long readSleepMs = (long) ( amount.getEstimatedValue() * 1000 );
 
     LOG.debug( "readSleepMs = {}", readSleepMs );
 
     Kronos.blockingSleep( readSleepMs );
     }
 
-  public void write( double sizeMB )
+  public void write( Amount<DataAmount> size )
     {
-    long writeSleepMs = (long) ( sizeMB / networkParams.getEffectiveWriteMbS() * 1000 );
+    Amount<? extends Quantity> amount = size.to( SI.BIT ).divide( networkParams.getEffectiveWriteRate().to( SI.BIT.divide( SI.SECOND ) ) );
+
+    long writeSleepMs = (long) ( amount.getEstimatedValue() * 1000 );
 
     LOG.debug( "writeSleepMs = {}", writeSleepMs );
 

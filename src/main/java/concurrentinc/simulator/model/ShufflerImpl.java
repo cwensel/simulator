@@ -6,9 +6,12 @@
 
 package concurrentinc.simulator.model;
 
+import javax.measure.quantity.DataAmount;
+
 import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +24,15 @@ public class ShufflerImpl implements Shuffler
   private static final Logger LOG = LoggerFactory.getLogger( ShufflerImpl.class );
 
   private float sortFactor = 1024; // Mb / sec
-  private long sortBlockSizeMb;
+  private Amount<DataAmount> sortBlockSize;
   private long numMappers;
-  private double sizeMb;
+  private Amount<DataAmount> size;
 
-  public ShufflerImpl( long sortBlockSizeMb, long numMappers, double sizeMb )
+  public ShufflerImpl( Amount<DataAmount> sortBlockSize, long numMappers, Amount<DataAmount> size )
     {
-    this.sortBlockSizeMb = sortBlockSizeMb;
+    this.sortBlockSize = sortBlockSize;
     this.numMappers = numMappers;
-    this.sizeMb = sizeMb;
+    this.size = size;
     }
 
   @Blocking
@@ -37,11 +40,11 @@ public class ShufflerImpl implements Shuffler
     {
     // fetch
     // should fetch through network object
-    network.read( sizeMb );
+    network.read( size );
 
     // sort
     // assumes O(n log n)
-    double bigO = sizeMb * Math.log10( sizeMb );
+    double bigO = size.longValue( Bandwidth.MB ) * Math.log10( size.longValue( Bandwidth.MB ) );
     double sortSleep = bigO / sortFactor * 1000;
 
     LOG.debug( "bigO = {} sortSleep = {}", bigO, sortSleep );

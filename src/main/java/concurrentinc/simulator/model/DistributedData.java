@@ -8,10 +8,14 @@ package concurrentinc.simulator.model;
 
 import java.util.Collection;
 import java.util.List;
+import javax.measure.quantity.DataAmount;
 
 import concurrentinc.simulator.util.PrintableImpl;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static concurrentinc.simulator.model.Bandwidth.MB;
 
 /**
  *
@@ -20,21 +24,21 @@ public class DistributedData extends PrintableImpl
   {
   private static final Logger LOG = LoggerFactory.getLogger( DistributedData.class );
 
-  public double sizeMb;
+  public Amount<DataAmount> size;
   public int numBlocks;
-  public double blockSizeMb = 128;
+  public Amount<DataAmount> blockSize = Amount.valueOf( 128l, MB );
   public int fileReplication = 3;
 
-  public DistributedData( double sizeMb )
+  public DistributedData( Amount<DataAmount> size )
     {
-    this.sizeMb = sizeMb;
+    this.size = size;
     }
 
-  public DistributedData( double sizeMb, int numBlocks, double blockSizeMb, int fileReplication )
+  public DistributedData( Amount<DataAmount> size, int numBlocks, Amount<DataAmount> blockSize, int fileReplication )
     {
-    this.sizeMb = sizeMb;
+    this.size = size;
     this.numBlocks = numBlocks;
-    this.blockSizeMb = blockSizeMb;
+    this.blockSize = blockSize;
     this.fileReplication = fileReplication;
     }
 
@@ -43,7 +47,7 @@ public class DistributedData extends PrintableImpl
     if( numBlocks != 0 )
       return numBlocks;
 
-    return (int) Math.ceil( sizeMb / blockSizeMb ); // round up, last block is small
+    return (int) Math.ceil( size.to( MB ).divide( blockSize.to( MB ) ).getEstimatedValue() );
     }
 
   public int getNumReplicatedBlocks()
@@ -51,13 +55,8 @@ public class DistributedData extends PrintableImpl
     return getNumBlocks() * fileReplication;
     }
 
-  public void read( Network network, double amountMb, int runningJobMapProcesses )
+  public void read( Network network, Amount<DataAmount> amountMb, int runningJobMapProcesses )
     {
-//    double readingBlocks = Math.ceil( amountMb / blockSizeMb );
-//
-//    if( readingBlocks > 1 )
-//      throw new IllegalStateException( "cannot read more than one block for now" );
-
     int numReplicatedBlocks = getNumReplicatedBlocks();
 
     LOG.debug( "numReplicatedBlocks = {}", numReplicatedBlocks );
@@ -70,21 +69,21 @@ public class DistributedData extends PrintableImpl
     network.read( amountMb );
     }
 
-  public void write( Network network, double amountMb )
+  public void write( Network network, Amount<DataAmount> amount )
     {
-    double writingAmount = amountMb * fileReplication;
+    Amount<DataAmount> writingAmount = amount.times( fileReplication );
 
     LOG.debug( "writing amount to network = {}", writingAmount );
 
     network.write( writingAmount );
     }
 
-  public static double totalDataSizeMB( Collection<DistributedData> distributedData )
+  public static Amount<DataAmount> totalDataSize( Collection<DistributedData> distributedData )
     {
-    double total = 0;
+    Amount<DataAmount> total = Amount.valueOf( 0, MB );
 
     for( DistributedData data : distributedData )
-      total += data.sizeMb;
+      total = total.plus( data.size );
 
     return total;
     }

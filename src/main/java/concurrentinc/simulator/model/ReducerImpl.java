@@ -6,9 +6,12 @@
 
 package concurrentinc.simulator.model;
 
+import javax.measure.quantity.DataAmount;
+
 import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +25,14 @@ public class ReducerImpl implements Reducer
 
   private DistributedData inputData;
   private float processingFactor;
-  private double processSizeMb;
+  private Amount<DataAmount> processSize;
   private final DistributedData outputData;
 
-  public ReducerImpl( DistributedData inputData, float processingFactor, double processSizeMb, DistributedData outputData )
+  public ReducerImpl( DistributedData inputData, float processingFactor, Amount<DataAmount> processSize, DistributedData outputData )
     {
     this.inputData = inputData;
     this.processingFactor = processingFactor;
-    this.processSizeMb = processSizeMb;
+    this.processSize = processSize;
     this.outputData = outputData;
     }
 
@@ -41,13 +44,13 @@ public class ReducerImpl implements Reducer
   @Blocking
   public void execute( Network network )
     {
-    long reducerSleep = (long) ( processSizeMb / processingFactor * 1000 );
+    long reducerSleep = (long) ( processSize.longValue( Bandwidth.MB ) / processingFactor * 1000 );
 
     LOG.debug( "reducerSleep = {}", reducerSleep );
 
     Kronos.blockingSleep( (long) reducerSleep );
 
-    inputData.write( network, outputData.sizeMb );
+    inputData.write( network, outputData.size );
     }
 
   }

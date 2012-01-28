@@ -12,6 +12,7 @@ import concurrentinc.simulator.params.ClusterParams;
 import concurrentinc.simulator.params.MRJobParams;
 import concurrentinc.simulator.params.WorkloadParams;
 import junit.framework.TestCase;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -22,7 +23,7 @@ public class SimpleTest extends TestCase
   public void testShortJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 1, 1 );
-    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Amount.valueOf( 1, Bandwidth.TB ) ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams );
 
@@ -35,13 +36,13 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT8H13M14.214S", jobRun.getDuration().toString() );
+    assertEquals( "PT8H16M5.970S", jobRun.getDuration().toString() );
     }
 
   public void testSimpleJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 100, 100 );
-    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Amount.valueOf( 1, Bandwidth.TB ) ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams );
 
@@ -54,13 +55,13 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT4M35.563S", jobRun.getDuration().toString() );
+    assertEquals( "PT4M37.297S", jobRun.getDuration().toString() );
     }
 
   public void testChainedJobRun() throws Exception
     {
     MRJobParams mrJobParams = new MRJobParams( 100, 100 );
-    mrJobParams.sources.add( new DistributedData( Bandwidth.TB ) );
+    mrJobParams.sources.add( new DistributedData( Amount.valueOf( 1, Bandwidth.TB ) ) );
 
     WorkloadParams params = new WorkloadParams( mrJobParams, new MRJobParams( 100, 100 ) );
 
@@ -73,6 +74,6 @@ public class SimpleTest extends TestCase
     System.out.println( "end: " + jobRun.getEndTime() );
     System.out.println( "duration: " + jobRun.getDuration() );
 
-    assertEquals( "PT8M46.550S", jobRun.getDuration().toString() );
+    assertEquals( "PT8M48.206S", jobRun.getDuration().toString() );
     }
   }

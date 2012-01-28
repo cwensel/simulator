@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2011 Concurrent, Inc. All Rights Reserved.
+ * Copyright (c) 2007-2012 Concurrent, Inc. All Rights Reserved.
  *
  * Project and contact information: http://www.concurrentinc.com/
  */
@@ -15,6 +15,7 @@ import concurrentinc.simulator.params.NetworkParams;
 import junit.framework.TestCase;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
+import org.jscience.physics.amount.Amount;
 
 /**
  *
@@ -30,7 +31,7 @@ public class NetworkTest extends TestCase
     NetworkParams networkParams = new NetworkParams();
     Network network = new NetworkImpl( networkParams );
 
-    network.read( Bandwidth.TB );
+    network.read( Amount.valueOf( 1, Bandwidth.TB ) );
 
     controller.eventLoop();
 
@@ -43,6 +44,6 @@ public class NetworkTest extends TestCase
     System.out.println( "end = " + end );
     System.out.println( "duration = " + duration );
 
-    assertEquals( "PT13M39.200S", duration.toString() );
+    assertEquals( "PT14M39.609S", duration.toString() );
     }
   }

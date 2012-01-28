@@ -11,14 +11,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.measure.quantity.DataAmount;
 
 import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
 import com.hellblazer.primeMover.SynchronousQueue;
 import concurrentinc.simulator.params.MRJobParams;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static concurrentinc.simulator.model.Bandwidth.MB;
 
 /**
  *
@@ -56,9 +60,9 @@ public class MRJobImpl implements MRJob
     return new MRJobParams( mappers, mrJobParams.mapper.getDataFactor(), mrJobParams.mapper.getProcessingThroughput(), reducers, mrJobParams.reducer.getDataFactor(), mrJobParams.reducer.getProcessingThroughput(), inputData, getOutputData() );
     }
 
-  private double getBlockSizeMb()
+  private Amount<DataAmount> getBlockSize()
     {
-    return mrJobParams.blockSizeMb;
+    return mrJobParams.blockSize;
     }
 
   private int getFileReplication()
@@ -66,14 +70,14 @@ public class MRJobImpl implements MRJob
     return mrJobParams.fileReplication;
     }
 
-  private double getOutputSizeMb()
+  private Amount<DataAmount> getOutputSize()
     {
-    return mrJobParams.reducer.getDataFactor() * getShuffleSizeMb();
+    return getShuffleSize().times( mrJobParams.reducer.getDataFactor() );
     }
 
-  private double getShuffleSizeMb()
+  private Amount<DataAmount> getShuffleSize()
     {
-    return mrJobParams.mapper.getDataFactor() * getInputSizeMB();
+    return getInputSize().times( mrJobParams.mapper.getDataFactor() );
     }
 
   private List<DistributedData> getOutputData()
@@ -94,26 +98,19 @@ public class MRJobImpl implements MRJob
     return output;
     }
 
-  private double getInputSizeMB()
+  private Amount<DataAmount> getInputSize()
     {
-    return DistributedData.totalDataSizeMB( inputData );
+    return DistributedData.totalDataSize( inputData );
     }
 
   long getNumMappers()
     {
-    double mod = getInputSizeMB() % getMinNumMappers();
-    return Math.max( getMinNumMappers() + ( mod == 0 ? 0 : 1 ), getNumBlocks() );
+    return getNumBlocks();
     }
 
   long getNumBlocks()
     {
     return DistributedData.totalBlocks( inputData );
-    }
-
-  int computeSplitSizeMb()
-    {
-    double goalSize = getInputSizeMB() / getMinNumMappers();
-    return (int) Math.max( 1d, Math.min( goalSize, (double) getBlockSizeMb() ) );
     }
 
   int getMinNumMappers()
@@ -195,12 +192,19 @@ public class MRJobImpl implements MRJob
 
   private void startMaps()
     {
-    cluster.executeMaps( getMapProcesses() );
+    Collection<MapProcess> mapProcesses = getMapProcesses();
+    LOG.info( "starting map processes: {}", mapProcesses.size() );
+
+    cluster.executeMaps( mapProcesses );
     }
 
   private void startReduces()
     {
-    cluster.executeReduces( getReduceProcesses() );
+    Collection<ReduceProcess> reduceProcesses = getReduceProcesses();
+
+    LOG.info( "starting reduce processes: {}", reduceProcesses.size() );
+
+    cluster.executeReduces( reduceProcesses );
     }
 
   private Collection<MapProcess> getMapProcesses()
@@ -221,21 +225,21 @@ public class MRJobImpl implements MRJob
 
     for( DistributedData data : inputData )
       {
-      double remainder = data.sizeMb;
-      double minSplitSize = data.blockSizeMb / mappersPerBlock;
+      Amount<DataAmount> remainder = data.size;
+      Amount<DataAmount> maxSplitSize = data.blockSize.divide( mappersPerBlock );
 
-      LOG.debug( "max split size: {}", minSplitSize );
+      LOG.debug( "max split size: {}", maxSplitSize );
 
-      while( remainder / minSplitSize > 1.1 )
+      while( remainder.to( MB ).divide( maxSplitSize.to( MB ) ).getEstimatedValue() > 1.1 )
         {
-        double splitSize = Math.min( minSplitSize, remainder );
+        Amount<DataAmount> splitSize = maxSplitSize.to( MB ).isLessThan( remainder.to( MB ) ) ? maxSplitSize : remainder;
 
         mapProcesses.add( makeMapProcess( data, splitSize ) );
 
-        remainder -= splitSize;
+        remainder = remainder.minus( splitSize );
         }
 
-      if( remainder > 0 )
+      if( remainder.isGreaterThan( Amount.valueOf( 0, MB ) ) )
         mapProcesses.add( makeMapProcess( data, remainder ) );
 
       }
@@ -243,11 +247,14 @@ public class MRJobImpl implements MRJob
     return mapProcesses;
     }
 
-  private MapProcessImpl makeMapProcess( DistributedData data, double splitSize )
+  private MapProcessImpl makeMapProcess( DistributedData data, Amount<DataAmount> splitSize )
     {
-    DistributedData output = new DistributedData( mrJobParams.mapper.getDataFactor() * splitSize, 0, getBlockSizeMb(), getFileReplication() );
+    Amount<DataAmount> outputSize = splitSize.times( mrJobParams.mapper.getDataFactor() );
+    DistributedData output = new DistributedData( outputSize, 0, getBlockSize(), getFileReplication() );
+
     // we pass data instance in so we can block on it being read by multiple processes
     Mapper mapper = new MapperImpl( data, splitSize, mrJobParams.mapper.getProcessingThroughput(), output );
+
     return new MapProcessImpl( this, mapper );
     }
 
@@ -257,22 +264,22 @@ public class MRJobImpl implements MRJob
     completedReduceProcesses = new HashSet<ReduceProcess>();
 
     LOG.info( "num reducers: {}", getNumReducers() );
-    LOG.info( "shuffle size: {}", getShuffleSizeMb() );
-    LOG.info( "output size: {}", getOutputSizeMb() );
+    LOG.info( "shuffle size: {}", getShuffleSize() );
+    LOG.info( "output size: {}", getOutputSize() );
 
-    double toProcess = getShuffleSizeMb() / getNumReducers(); // assume even distribution
-    double toWrite = getOutputSizeMb() / getNumReducers();
+    Amount<DataAmount> toProcess = getShuffleSize().divide( getNumReducers() ); // assume even distribution
+    Amount<DataAmount> toWrite = getOutputSize().divide( getNumReducers() );
 
     LOG.info( "sort each to process: {}", toProcess );
     LOG.info( "reducer each to write: {}", toWrite );
 
-    DistributedData data = new DistributedData( toWrite, 0, getBlockSizeMb(), getFileReplication() );
+    DistributedData data = new DistributedData( toWrite, 0, getBlockSize(), getFileReplication() );
 
     for( int i = 0; i < getNumReducers(); i++ )
       {
-      Shuffler shuffler = new ShufflerImpl( mrJobParams.reducer.getSortBlockSizeMb(), getNumMappers(), toProcess );
+      Shuffler shuffler = new ShufflerImpl( mrJobParams.reducer.getSortBlockSize(), getNumMappers(), toProcess );
 
-      DistributedData output = new DistributedData( mrJobParams.reducer.getDataFactor() * toWrite, 0, getBlockSizeMb(), getFileReplication() );
+      DistributedData output = new DistributedData( toWrite.times( mrJobParams.reducer.getDataFactor() ), 0, getBlockSize(), getFileReplication() );
       Reducer reducer = new ReducerImpl( data, mrJobParams.reducer.getProcessingThroughput(), toProcess, output );
 
       reduceProcesses.add( new ReduceProcessImpl( this, shuffler, reducer ) );

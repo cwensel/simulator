@@ -6,9 +6,12 @@
 
 package concurrentinc.simulator.model;
 
+import javax.measure.quantity.DataAmount;
+
 import com.hellblazer.primeMover.Blocking;
 import com.hellblazer.primeMover.Entity;
 import com.hellblazer.primeMover.Kronos;
+import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +24,11 @@ public class MapperImpl implements Mapper
   private static final Logger LOG = LoggerFactory.getLogger( MapperImpl.class );
 
   private DistributedData inputData;
-  private final double splitSize;
+  private final Amount<DataAmount> splitSize;
   private DistributedData outputData;
   private float processingFactor;
 
-  public MapperImpl( DistributedData inputData, double splitSize, float processingFactor, DistributedData outputData )
+  public MapperImpl( DistributedData inputData, Amount<DataAmount> splitSize, float processingFactor, DistributedData outputData )
     {
     this.inputData = inputData;
     this.splitSize = splitSize;
@@ -43,10 +46,10 @@ public class MapperImpl implements Mapper
     {
     inputData.read( network, splitSize, runningMapProcesses );
 
-    double mapperSleep = splitSize / processingFactor * 1000;
+    long mapperSleep = (long) ( splitSize.divide( processingFactor ).getEstimatedValue() * 1000 );
 
     LOG.debug( "mapperSleep = {}", mapperSleep );
 
-    Kronos.blockingSleep( (long) mapperSleep );
+    Kronos.blockingSleep( mapperSleep );
     }
   }

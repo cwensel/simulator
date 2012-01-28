@@ -18,6 +18,8 @@ import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.jgrapht.Graphs;
 
+import static concurrentinc.simulator.model.Bandwidth.MB;
+
 /**
  *
  */
@@ -34,8 +36,8 @@ public class WorkloadSerializer extends JsonSerializer<WorkloadParams>
     {
     jsonGenerator.writeStartObject();
 
-    jsonGenerator.writeNumberField( "totalSourceMB", value.getSourceSizeMB() );
-    jsonGenerator.writeNumberField( "totalSinkMB", value.getSinkSizeMB() );
+    jsonGenerator.writeNumberField( "totalSourceMB", value.getSourceSize().longValue( MB ) );
+    jsonGenerator.writeNumberField( "totalSinkMB", value.getSinkSize().longValue( MB ) );
 
     Iterator<MRJobParams> iterator = value.mrParams.getTopologicalIterator();
 
